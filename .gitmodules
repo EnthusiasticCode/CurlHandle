@@ -6,4 +6,4 @@
 	url = git://github.com/bagder/c-ares.git
 [submodule "SFTP"]
 	path = SFTP
-	url = https://github.com/karelia/libssh2_sftp-Cocoa-wrapper.git
+	url = git@github.com:EnthusiasticCode/libssh2_sftp-Cocoa-wrapper.git
