@@ -106,12 +106,14 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
 		NSLog(@"Didn't curl_global_init, result = %d",rc);
 	}
 	
+#if !TARGET_OS_IPHONE
 	// Now initialize System Config. I have no idea why this signature; it's just what was in tester app
 	sSCDSRef = SCDynamicStoreCreate(NULL,CFSTR("XxXx"),NULL, NULL);
 	if ( sSCDSRef == NULL )
 	{
 		NSLog(@"Didn't get SCDynamicStoreRef");
 	}
+#endif
 }
 
 /*"	Set a proxy user id and password, used by all CURLHandle. This should be done before any transfers are made."*/
@@ -330,7 +332,7 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
         }
     }
     
-
+#if !TARGET_OS_IPHONE
     // Set the proxy info.  Ignore errors -- just don't do proxy if errors.
     if (sAllowsProxy)	// normally this is YES.
     {
@@ -380,6 +382,7 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
             }
         }
     }
+#endif // !TARGET_OS_IPHONE
 
     // HTTP method
     NSString *method = [request HTTPMethod];

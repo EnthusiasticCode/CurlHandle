@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD92ED4D16A172D70035A117 /* liblibcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDDD23F316A171D400693DE6 /* liblibcurl.a */; };
 		CDDD237316A0886800693DE6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDDD237216A0886800693DE6 /* Foundation.framework */; };
 		CDDD238216A0894B00693DE6 /* CURLHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B96CBC0A6360F90060AC12 /* CURLHandle.m */; };
 		CDDD238316A0894B00693DE6 /* CURLMulti.m in Sources */ = {isa = PBXBuildFile; fileRef = 221EAD10160B167900E4F270 /* CURLMulti.m */; };
@@ -21,6 +22,16 @@
 		CDDD238E16A0897800693DE6 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDDD238D16A0897800693DE6 /* SystemConfiguration.framework */; };
 		CDDD239016A0899700693DE6 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDDD238F16A0899700693DE6 /* CFNetwork.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CDDD23F216A171D400693DE6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CDDD23EB16A171D300693DE6 /* libcurl.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CD8AE2B416187F770095DC1B;
+			remoteInfo = curl;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		CDDD236F16A0886800693DE6 /* CopyFiles */ = {
@@ -78,6 +89,7 @@
 		CDDD238B16A0896E00693DE6 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		CDDD238D16A0897800693DE6 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk/System/Library/Frameworks/SystemConfiguration.framework; sourceTree = DEVELOPER_DIR; };
 		CDDD238F16A0899700693DE6 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
+		CDDD23EB16A171D300693DE6 /* libcurl.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libcurl.xcodeproj; path = "../libcurl-for-iOS/libcurl.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +97,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD92ED4D16A172D70035A117 /* liblibcurl.a in Frameworks */,
 				CDDD239016A0899700693DE6 /* CFNetwork.framework in Frameworks */,
 				CDDD238E16A0897800693DE6 /* SystemConfiguration.framework in Frameworks */,
 				CDDD238C16A0896E00693DE6 /* Security.framework in Frameworks */,
@@ -160,6 +173,7 @@
 		223FD093160B523700BE1C80 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CDDD23EB16A171D300693DE6 /* libcurl.xcodeproj */,
 				CDDD238F16A0899700693DE6 /* CFNetwork.framework */,
 				CDDD238D16A0897800693DE6 /* SystemConfiguration.framework */,
 				CDDD238B16A0896E00693DE6 /* Security.framework */,
@@ -191,6 +205,14 @@
 				223FD0A5160B523700BE1C80 /* CURLHandleTests-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		CDDD23EC16A171D300693DE6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CDDD23F316A171D400693DE6 /* liblibcurl.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -232,12 +254,29 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* CURLHandle */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = CDDD23EC16A171D300693DE6 /* Products */;
+					ProjectRef = CDDD23EB16A171D300693DE6 /* libcurl.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				CDDD237016A0886800693DE6 /* curlhandle */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		CDDD23F316A171D400693DE6 /* liblibcurl.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			name = liblibcurl.a;
+			path = libcurl.a;
+			remoteRef = CDDD23F216A171D400693DE6 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXSourcesBuildPhase section */
 		CDDD236D16A0886800693DE6 /* Sources */ = {
@@ -316,7 +355,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				HEADER_SEARCH_PATHS = "$(SOURCE_ROOT)/../curl/include";
+				HEADER_SEARCH_PATHS = "$(SOURCE_ROOT)/../libcurl-for-iOS/curl/include";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -339,7 +378,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CURLHandle_Prefix.pch;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				HEADER_SEARCH_PATHS = "$(SOURCE_ROOT)/../curl/include";
+				HEADER_SEARCH_PATHS = "$(SOURCE_ROOT)/../libcurl-for-iOS/curl/include";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";

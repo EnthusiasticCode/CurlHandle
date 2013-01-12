@@ -6,4 +6,7 @@
 	url = git://github.com/bagder/c-ares.git
 [submodule "SFTP"]
 	path = SFTP
-	url = git@github.com:EnthusiasticCode/libssh2_sftp-Cocoa-wrapper.git
+	url = https://github.com/EnthusiasticCode/libssh2_sftp-Cocoa-wrapper.git
+[submodule "libcurl-for-iOS"]
+	path = libcurl-for-iOS
+	url = https://github.com/EnthusiasticCode/libcurl-for-iOS.git
