@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		CD92ED4D16A172D70035A117 /* liblibcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDDD23F316A171D400693DE6 /* liblibcurl.a */; };
+		CD92EDF816A18B950035A117 /* CURLHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 79B96CBB0A6360F90060AC12 /* CURLHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD92EDF916A18B950035A117 /* CURLProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 27229B3814C83905007D0FF1 /* CURLProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD92EE1416A191CD0035A117 /* NSDictionary+CURLHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 22767ED7161078F1008D0848 /* NSDictionary+CURLHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD92EE1516A191CD0035A117 /* NSString+CURLHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 2270F4AA16109133009B6F98 /* NSString+CURLHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD92EE1616A191CD0035A117 /* NSURLRequest+CURLHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 2270F49F16108D44009B6F98 /* NSURLRequest+CURLHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDDD237316A0886800693DE6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDDD237216A0886800693DE6 /* Foundation.framework */; };
 		CDDD238216A0894B00693DE6 /* CURLHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B96CBC0A6360F90060AC12 /* CURLHandle.m */; };
 		CDDD238316A0894B00693DE6 /* CURLMulti.m in Sources */ = {isa = PBXBuildFile; fileRef = 221EAD10160B167900E4F270 /* CURLMulti.m */; };
@@ -217,6 +222,21 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		CD92EDF716A18B7E0035A117 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD92EDF816A18B950035A117 /* CURLHandle.h in Headers */,
+				CD92EDF916A18B950035A117 /* CURLProtocol.h in Headers */,
+				CD92EE1416A191CD0035A117 /* NSDictionary+CURLHandle.h in Headers */,
+				CD92EE1516A191CD0035A117 /* NSString+CURLHandle.h in Headers */,
+				CD92EE1616A191CD0035A117 /* NSURLRequest+CURLHandle.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		CDDD237016A0886800693DE6 /* curlhandle */ = {
 			isa = PBXNativeTarget;
@@ -225,6 +245,7 @@
 				CDDD236D16A0886800693DE6 /* Sources */,
 				CDDD236E16A0886800693DE6 /* Frameworks */,
 				CDDD236F16A0886800693DE6 /* CopyFiles */,
+				CD92EDF716A18B7E0035A117 /* Headers */,
 			);
 			buildRules = (
 			);
@@ -358,7 +379,9 @@
 				HEADER_SEARCH_PATHS = "$(SOURCE_ROOT)/../libcurl-for-iOS/curl/include";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = "-ObjC";
+				PRIVATE_HEADERS_FOLDER_PATH = /include/CURLHandle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = /include/CURLHandle;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 			};
@@ -381,7 +404,9 @@
 				HEADER_SEARCH_PATHS = "$(SOURCE_ROOT)/../libcurl-for-iOS/curl/include";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = "-ObjC";
+				PRIVATE_HEADERS_FOLDER_PATH = /include/CURLHandle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = /include/CURLHandle;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				VALIDATE_PRODUCT = YES;
