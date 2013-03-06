@@ -28,6 +28,24 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       buildConfiguration = "Debug">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "223FD091160B523700BE1C80"
+               BuildableName = "CURLHandleTests.octest"
+               BlueprintName = "CURLHandleTests"
+               ReferencedContainer = "container:CURLHandle.xcodeproj">
+            </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "CURLProtocolTests/testCancelling">
+               </Test>
+               <Test
+                  Identifier = "KMSTestCase">
+               </Test>
+            </SkippedTests>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -39,6 +57,15 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "8DC2EF4F0486A6940098B216"
+            BuildableName = "CURLHandle.framework"
+            BlueprintName = "CURLHandle"
+            ReferencedContainer = "container:CURLHandle.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>

@@ -12,19 +12,27 @@
 
 @interface CURLProtocol()
 
+@property (assign, nonatomic) BOOL gotResponse;
 @property (strong, nonatomic) CURLHandle* handle;
+@property (assign, nonatomic) BOOL uploaded;
 
 @end
 
 @implementation CURLProtocol
 
+@synthesize gotResponse = _gotResponse;
 @synthesize handle = _handle;
+@synthesize uploaded = _uploaded;
 
 #pragma mark - Object Lifecycle
 
 - (void)dealloc
 {
+    NSAssert((_handle == nil) || [_handle hasCompleted], @"handle should be done by the time we are destroyed");
+
     [_handle release];
+
+    CURLProtocolLog(@"dealloced");
 
     [super dealloc];
 }
@@ -44,6 +52,8 @@
 
 - (void)startLoading;
 {
+    CURLProtocolLog(@"starting");
+
     // Request auth before trying FTP connection
     NSURL *url = [[self request] URL];
     NSString *scheme = [url scheme];
@@ -80,50 +90,75 @@
 
 - (void)startLoadingWithCredential:(NSURLCredential *)credential;
 {
-    CURLHandle *handle = [[CURLHandle alloc] initWithRequest:[self request] credential:credential delegate:self];
+    CURLHandle *handle = [[CURLHandle alloc] initWithRequest:[self request] credential:credential delegate:self multi:nil];
     self.handle = handle;
     [handle release];
 }
 
 - (void)stopLoading;
 {
-    if (![self.handle hasCompleted])
-    {
-        CURLMulti* multi = [CURLMulti sharedInstance];
-        [multi cancelHandle:self.handle];
-    }
-
+    CURLProtocolLog(@"stopping");
+    
+    // this protocol object is going away
+    // if our associated handle hasn't completed yet, we need to cancel it, to stop
+    // it from trying to send us delegate messages after we've been disposed
+    [self.handle cancel];
     self.handle = nil;
 }
 
 #pragma mark - Utilities
 
+- (NSString*)description
+{
+    return [NSString stringWithFormat:@"<CURLProtocol %p %@>", self, self.request.URL];
+}
 
 #pragma mark - CURLHandleDelegate
 
 - (void)handle:(CURLHandle *)handle didReceiveResponse:(NSURLResponse *)response;
 {
-    [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageAllowed];
+    if (!self.gotResponse)
+    {
+        id <NSURLProtocolClient> client = [self client];
+        CURLProtocolLog(@"got didReceiveResponse %ld from %@ for %@", [(NSHTTPURLResponse*)response statusCode], handle, client);
+        [client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageAllowed];
+        self.gotResponse = YES;
+    }
 }
 
 - (void)handle:(CURLHandle *)handle didReceiveData:(NSData *)data;
 {
-    [[self client] URLProtocol:self didLoadData:data];
+    id <NSURLProtocolClient> client = [self client];
+    CURLProtocolLog(@"got didReceiveData from %@ for %@", handle, client);
+    [client URLProtocol:self didLoadData:data];
 }
 
 - (void)handle:(CURLHandle*)handle didFailWithError:(NSError *)error
 {
-    [[self client] URLProtocol:self didFailWithError:error];
+        id <NSURLProtocolClient> client = [self client];
+        CURLProtocolLog(@"got didFailWithError %@ from %@ for %@", error, handle, client);
+        [client URLProtocol:self didFailWithError:error];
 }
 
 - (void)handleDidFinish:(CURLHandle *)handle
 {
-    [[self client] URLProtocolDidFinishLoading:self];
+    id <NSURLProtocolClient> client = [self client];
+    CURLProtocolLog(@"got didFinish from %@ for %@", handle, client);
+    [client URLProtocolDidFinishLoading:self];
 }
 
 - (void)handle:(CURLHandle *)handle willSendBodyDataOfLength:(NSUInteger)bytesWritten
 {
-// TODO: need to pass this info on to the client
+    // TODO: improve this if we're ever given acess
+    // ideally we'd be able to generate a connection:didSendBodyData:totalBytesWritten:totalBytesExpectedToWrite: call here
+    // but NSURLProtocol doesn't give us a way to do it
+
+    // is the upload finished?
+    if (bytesWritten == 0)
+    {
+        // set a flag so that when stopLoading is called, we don't cancel incorrectly 
+        self.uploaded = YES;
+    }
 }
 
 #pragma mark NSURLAuthenticationChallengeSender

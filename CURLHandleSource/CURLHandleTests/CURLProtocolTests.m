@@ -17,24 +17,32 @@
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
+    NSLog(@"failed with error %@", error);
+
     self.error = error;
-    self.exitRunLoop = YES;
+    [self pause];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
+    NSLog(@"got response %@", response);
+
     self.response = response;
     self.buffer = [NSMutableData data];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)dataIn
 {
+    NSLog(@"got data %ld bytes", [dataIn length]);
+
     [self.buffer appendData:dataIn];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-    self.exitRunLoop = YES;
+    NSLog(@"finished");
+
+    [self pause];
 }
 
 - (void)connection:(NSURLConnection *)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite;
@@ -44,73 +52,78 @@
 
 - (void)testHTTPDownload
 {
-    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://raw.github.com/karelia/CurlHandle/master/DevNotes.txt"]];
+    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:[self testFileRemoteURL]];
     request.shouldUseCurlHandle = YES;
 
     NSURLConnection* connection = [NSURLConnection connectionWithRequest:request delegate:self];
     
     STAssertNotNil(connection, @"failed to get connection for request %@", request);
 
-    [self runUntilDone];
+    [self runUntilPaused];
 
     [self checkDownloadedBufferWasCorrect];
 }
 
 - (void)testCancelling
 {
-    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://raw.github.com/karelia/CurlHandle/master/DevNotes.txt"]];
+    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:[self testFileRemoteURL]];
     request.shouldUseCurlHandle = YES;
 
     NSURLConnection* connection = [NSURLConnection connectionWithRequest:request delegate:self];
     STAssertNotNil(connection, @"failed to get connection for request %@", request);
 
     [connection cancel];
+
+    // we don't get any delegate message to say that we've been cancelled, so we just have to finish
+    // the test here without checking anything else
 }
 
 - (void)testFTPDownload
 {
-    NSString* ftpTest = [[NSUserDefaults standardUserDefaults] objectForKey:@"CURLHandleFTPTestURL"];
-    STAssertNotNil(ftpTest, @"need to set a test server address using defaults, e.g: defaults write otest CURLHandleFTPTestURL \"ftp://user:password@ftp.test.com\"");
+    NSURL* ftpRoot = [self ftpTestServer];
+    if (ftpRoot)
+    {
+        NSURL* ftpDownload = [[ftpRoot URLByAppendingPathComponent:@"CURLHandleTests"] URLByAppendingPathComponent:@"TestContent.txt"];
 
-    NSURL* ftpRoot = [NSURL URLWithString:ftpTest];
-    NSURL* ftpDownload = [[ftpRoot URLByAppendingPathComponent:@"CURLHandleTests"] URLByAppendingPathComponent:@"DevNotes.txt"];
+        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:ftpDownload];
+        request.shouldUseCurlHandle = YES;
 
-    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:ftpDownload];
-    request.shouldUseCurlHandle = YES;
+        NSURLConnection* connection = [NSURLConnection connectionWithRequest:request delegate:self];
+        STAssertNotNil(connection, @"failed to get connection for request %@", request);
 
-    NSURLConnection* connection = [NSURLConnection connectionWithRequest:request delegate:self];
-    STAssertNotNil(connection, @"failed to get connection for request %@", request);
-
-    [self runUntilDone];
-
-    [self checkDownloadedBufferWasCorrect];
+        [self runUntilPaused];
+        
+        [self checkDownloadedBufferWasCorrect];
+    }
 }
 
 - (void)testFTPUpload
 {
-    NSString* ftpTest = [[NSUserDefaults standardUserDefaults] objectForKey:@"CURLHandleTestsFTPServer"];
-    STAssertNotNil(ftpTest, @"need to set a test server address using defaults, e.g: defaults write otest CURLHandleTestsFTPServer \"ftp://user:password@ftp.test.com\"");
+    NSURL* ftpRoot = [self ftpTestServer];
+    if (ftpRoot)
+    {
+        NSURL* ftpUpload = [[ftpRoot URLByAppendingPathComponent:@"CURLHandleTests"] URLByAppendingPathComponent:@"Upload.txt"];
 
-    NSURL* ftpRoot = [NSURL URLWithString:ftpTest];
-    NSURL* ftpUpload = [[ftpRoot URLByAppendingPathComponent:@"CURLHandleTests"] URLByAppendingPathComponent:@"Upload.txt"];
+        NSError* error = nil;
+        NSURL* testNotesURL = [self testFileURL];
+        NSString* testNotes = [NSString stringWithContentsOfURL:testNotesURL encoding:NSUTF8StringEncoding error:&error];
 
-    NSError* error = nil;
-    NSURL* devNotesURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"DevNotes" withExtension:@"txt"];
-    NSString* devNotes = [NSString stringWithContentsOfURL:devNotesURL encoding:NSUTF8StringEncoding error:&error];
+        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:ftpUpload];
+        request.shouldUseCurlHandle = YES;
+        [request curl_setCreateIntermediateDirectories:1];
+        [request setHTTPBody:[testNotes dataUsingEncoding:NSUTF8StringEncoding]];
 
-    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:ftpUpload];
-    request.shouldUseCurlHandle = YES;
-    [request curl_setCreateIntermediateDirectories:1];
-    [request setHTTPBody:[devNotes dataUsingEncoding:NSUTF8StringEncoding]];
+        NSURLConnection* connection = [NSURLConnection connectionWithRequest:request delegate:self];
+        STAssertNotNil(connection, @"failed to get connection for request %@", request);
 
-    NSURLConnection* connection = [NSURLConnection connectionWithRequest:request delegate:self];
-    STAssertNotNil(connection, @"failed to get connection for request %@", request);
+        [self runUntilPaused];
 
-    [self runUntilDone];
-
-    STAssertNil(self.error, @"got error %@", self.error);
-    STAssertNil(self.response, @"got unexpected response %@", self.response);
-    STAssertTrue([self.buffer length] == 0, @"got unexpected data %@", self.buffer);
+        NSHTTPURLResponse* response = (NSHTTPURLResponse*)self.response;
+        STAssertTrue([response isMemberOfClass:[NSHTTPURLResponse class]], @"got response of class %@", [response class]);
+        STAssertEquals([response statusCode], (NSInteger) 226, @"got unexpected code %ld", [response statusCode]);
+        STAssertNil(self.error, @"got error %@", self.error);
+        STAssertTrue([self.buffer length] == 0, @"got unexpected data %@", self.buffer);
+    }
 }
 
 @end

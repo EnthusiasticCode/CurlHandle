@@ -10,3 +10,7 @@
     #import <Cocoa/Cocoa.h>
   #endif
 #endif
+
+#define CURLHandleLog(...) NSLog(@"%@: %@", self, [NSString stringWithFormat:__VA_ARGS__])
+#define CURLMultiLog(...) NSLog(@"%@: %@", self, [NSString stringWithFormat:__VA_ARGS__])
+#define CURLProtocolLog(...) NSLog(@"%@: %@", self, [NSString stringWithFormat:__VA_ARGS__])
