@@ -133,11 +133,8 @@
 		2287EBF516B7CF9A0039E555 /* KMSSendServerDataCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 2287EBEE16B7CF9A0039E555 /* KMSSendServerDataCommand.m */; };
 		2287EBF616B7CF9A0039E555 /* KMSSendStringCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 2287EBF016B7CF9A0039E555 /* KMSSendStringCommand.m */; };
 		229748FC1610C1AE0042A51A /* CURLHandleBasedTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 229748FB1610C1AE0042A51A /* CURLHandleBasedTest.m */; };
-		22BCCE3016ADD63500DFFE8D /* libssh2.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22BCCE2716ADD53000DFFE8D /* libssh2.dylib */; };
 		22BCCE3316ADD66900DFFE8D /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27D77E151672BD9B0091EF91 /* Security.framework */; };
 		22BCCE3C16ADD73400DFFE8D /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 277D77E1160380AF00906915 /* CFNetwork.framework */; };
-		22BCCE4816ADE58B00DFFE8D /* libssl.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22BCCE4516ADE52700DFFE8D /* libssl.dylib */; };
-		22BCCE4916ADE58D00DFFE8D /* libcrypto.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22BCCE2816ADD53000DFFE8D /* libcrypto.dylib */; };
 		22BF085516AEAA76009BE5A3 /* NSURLRequest+CURLHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 2270F4A016108D44009B6F98 /* NSURLRequest+CURLHandle.m */; };
 		22BF085616AEAA7A009BE5A3 /* CK2SSHCredential.m in Sources */ = {isa = PBXBuildFile; fileRef = 27D77E121672BBB50091EF91 /* CK2SSHCredential.m */; };
 		22BF089C16AEECEC009BE5A3 /* KMSConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BF086316AEECEC009BE5A3 /* KMSConnection.m */; };
@@ -161,10 +158,6 @@
 		79B96CAC0A6360E00060AC12 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79B96CA70A6360E00060AC12 /* SystemConfiguration.framework */; };
 		79B96CBF0A6360F90060AC12 /* CURLHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 79B96CBB0A6360F90060AC12 /* CURLHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		79B96CC00A6360F90060AC12 /* CURLHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B96CBC0A6360F90060AC12 /* CURLHandle.m */; };
-		8008037C166C5BE3004D39F5 /* libcurl.dylib in Copy Files - Frameworks */ = {isa = PBXBuildFile; fileRef = 809AE1C71602C7DD001D02E1 /* libcurl.dylib */; };
-		8008037D166C5BE5004D39F5 /* libcares.dylib in Copy Files - Frameworks */ = {isa = PBXBuildFile; fileRef = 80080379166C5B40004D39F5 /* libcares.dylib */; };
-		8008037E166C5BF4004D39F5 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 809AE1C71602C7DD001D02E1 /* libcurl.dylib */; };
-		8008037F166C5BF9004D39F5 /* libcares.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 80080379166C5B40004D39F5 /* libcares.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -233,9 +226,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
-				22BCCE3016ADD63500DFFE8D /* libssh2.dylib in CopyFiles */,
-				22BCCE4816ADE58B00DFFE8D /* libssl.dylib in CopyFiles */,
-				22BCCE4916ADE58D00DFFE8D /* libcrypto.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,8 +235,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				8008037D166C5BE5004D39F5 /* libcares.dylib in Copy Files - Frameworks */,
-				8008037C166C5BE3004D39F5 /* libcurl.dylib in Copy Files - Frameworks */,
 			);
 			name = "Copy Files - Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -289,9 +277,6 @@
 		2287EBF016B7CF9A0039E555 /* KMSSendStringCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KMSSendStringCommand.m; sourceTree = "<group>"; };
 		229748FA1610C1AE0042A51A /* CURLHandleBasedTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CURLHandleBasedTest.h; sourceTree = "<group>"; };
 		229748FB1610C1AE0042A51A /* CURLHandleBasedTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CURLHandleBasedTest.m; sourceTree = "<group>"; };
-		22BCCE2716ADD53000DFFE8D /* libssh2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssh2.dylib; path = ../SFTP/libssh2.dylib; sourceTree = "<group>"; };
-		22BCCE2816ADD53000DFFE8D /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = ../SFTP/libcrypto.dylib; sourceTree = "<group>"; };
-		22BCCE4516ADE52700DFFE8D /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = ../SFTP/libssl.dylib; sourceTree = "<group>"; };
 		22BF086216AEECEC009BE5A3 /* KMSConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KMSConnection.h; sourceTree = "<group>"; };
 		22BF086316AEECEC009BE5A3 /* KMSConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KMSConnection.m; sourceTree = "<group>"; };
 		22BF086416AEECEC009BE5A3 /* KMSListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KMSListener.h; sourceTree = "<group>"; };
@@ -327,12 +312,8 @@
 		79B96CBC0A6360F90060AC12 /* CURLHandle.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CURLHandle.m; sourceTree = "<group>"; };
 		79B96CBD0A6360F90060AC12 /* CURLHandle+extras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = "CURLHandle+extras.h"; sourceTree = "<group>"; };
 		79B96CBE0A6360F90060AC12 /* CURLHandle+extras.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = "CURLHandle+extras.m"; sourceTree = "<group>"; };
-		80080316166962C7004D39F5 /* libcurl-README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "libcurl-README.txt"; sourceTree = "<group>"; };
 		8008031816696329004D39F5 /* curl */ = {isa = PBXFileReference; lastKnownFileType = folder; name = curl; path = ../curl; sourceTree = "<group>"; };
-		8008031D166A93C4004D39F5 /* libcares-README.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "libcares-README.txt"; sourceTree = "<group>"; };
 		8008031E166A93DD004D39F5 /* c-ares */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "c-ares"; path = "../c-ares"; sourceTree = "<group>"; };
-		80080379166C5B40004D39F5 /* libcares.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libcares.dylib; sourceTree = "<group>"; };
-		809AE1C71602C7DD001D02E1 /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libcurl.dylib; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* CURLHandle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CURLHandle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -353,8 +334,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8008037E166C5BF4004D39F5 /* libcurl.dylib in Frameworks */,
-				8008037F166C5BF9004D39F5 /* libcares.dylib in Frameworks */,
 				277D77E01603804900906915 /* Foundation.framework in Frameworks */,
 				277D77E2160380AF00906915 /* CFNetwork.framework in Frameworks */,
 				79B96CAC0A6360E00060AC12 /* SystemConfiguration.framework in Frameworks */,
@@ -390,11 +369,6 @@
 		0867D69AFE84028FC02AAC07 /* Libraries & Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				22BCCE4516ADE52700DFFE8D /* libssl.dylib */,
-				809AE1C71602C7DD001D02E1 /* libcurl.dylib */,
-				22BCCE2716ADD53000DFFE8D /* libssh2.dylib */,
-				22BCCE2816ADD53000DFFE8D /* libcrypto.dylib */,
-				80080379166C5B40004D39F5 /* libcares.dylib */,
 				1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */,
 				223FD094160B523700BE1C80 /* SenTestingKit.framework */,
 			);
@@ -526,9 +500,7 @@
 		22BF08FA16AF09B2009BE5A3 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
-				8008031D166A93C4004D39F5 /* libcares-README.txt */,
 				8008031E166A93DD004D39F5 /* c-ares */,
-				80080316166962C7004D39F5 /* libcurl-README.txt */,
 				8008031816696329004D39F5 /* curl */,
 			);
 			name = Modules;
