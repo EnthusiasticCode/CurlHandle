@@ -603,7 +603,7 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
     return _executing == NO;
 }
 
-- (NSString*)nameForType:(curl_infotype)type
++ (NSString*)nameForType:(curl_infotype)type
 {
     return kInfoNames[type];
 }
@@ -861,12 +861,11 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
 
 - (NSError*)errorForURL:(NSURL*)url code:(CURLcode)code
 {
-    NSString *description = [NSString stringWithUTF8String:_errorBuffer];
-    
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
                                      url, NSURLErrorFailingURLErrorKey,
                                      [url absoluteString], NSURLErrorFailingURLStringErrorKey,
-                                     description, NSLocalizedDescriptionKey,
+                                     [NSString stringWithUTF8String:_errorBuffer], NSLocalizedDescriptionKey,
+                                     [NSString stringWithUTF8String:curl_easy_strerror(code)], NSLocalizedFailureReasonErrorKey,
                                      nil];
     
     long responseCode;
@@ -1040,7 +1039,7 @@ int curlDebugFunction(CURL *curl, curl_infotype infoType, char *info, size_t inf
                 }
             }
             
-            CURLHandleLog(@"%@ - %@", [self nameForType:infoType], string);
+            CURLHandleLog(@"%@ - %@", [self.class nameForType:infoType], string);
             
             if (delegateResponds)
             {
