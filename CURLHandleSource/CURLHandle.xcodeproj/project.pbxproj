@@ -301,8 +301,8 @@
 		27229B3814C83905007D0FF1 /* CURLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CURLProtocol.h; sourceTree = "<group>"; };
 		27229B3914C83905007D0FF1 /* CURLProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CURLProtocol.m; sourceTree = "<group>"; };
 		277D77E1160380AF00906915 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
-		27D77E111672BBB50091EF91 /* CK2SSHCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CK2SSHCredential.h; path = ../SFTP/CK2SSHCredential.h; sourceTree = "<group>"; };
-		27D77E121672BBB50091EF91 /* CK2SSHCredential.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CK2SSHCredential.m; path = ../SFTP/CK2SSHCredential.m; sourceTree = "<group>"; };
+		27D77E111672BBB50091EF91 /* CK2SSHCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CK2SSHCredential.h; path = "../../libssh2_sftp-Cocoa-wrapper/Sources/CK2SSHCredential.h"; sourceTree = "<group>"; };
+		27D77E121672BBB50091EF91 /* CK2SSHCredential.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CK2SSHCredential.m; path = "../../libssh2_sftp-Cocoa-wrapper/Sources/CK2SSHCredential.m"; sourceTree = "<group>"; };
 		27D77E151672BD9B0091EF91 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		32DBCF5E0370ADEE00C91783 /* CURLHandle_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CURLHandle_Prefix.pch; sourceTree = "<group>"; };
 		795946890AA88D0000EBF548 /* ResumableHTTPUploader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResumableHTTPUploader.h; sourceTree = "<group>"; };
@@ -312,8 +312,6 @@
 		79B96CBC0A6360F90060AC12 /* CURLHandle.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CURLHandle.m; sourceTree = "<group>"; };
 		79B96CBD0A6360F90060AC12 /* CURLHandle+extras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = "CURLHandle+extras.h"; sourceTree = "<group>"; };
 		79B96CBE0A6360F90060AC12 /* CURLHandle+extras.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = "CURLHandle+extras.m"; sourceTree = "<group>"; };
-		8008031816696329004D39F5 /* curl */ = {isa = PBXFileReference; lastKnownFileType = folder; name = curl; path = ../curl; sourceTree = "<group>"; };
-		8008031E166A93DD004D39F5 /* c-ares */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "c-ares"; path = "../c-ares"; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* CURLHandle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CURLHandle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -359,20 +357,19 @@
 				08FB77AEFE84172EC02AAC07 /* Source */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				223FD09C160B523700BE1C80 /* Tests */,
-				22BF08FA16AF09B2009BE5A3 /* Modules */,
-				0867D69AFE84028FC02AAC07 /* Libraries & Frameworks */,
+				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 			);
 			name = CURLHandle;
 			sourceTree = "<group>";
 		};
-		0867D69AFE84028FC02AAC07 /* Libraries & Frameworks */ = {
+		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */,
-				223FD094160B523700BE1C80 /* SenTestingKit.framework */,
+				1058C7B0FEA5585E11CA2CBB /* Apple */,
+				5F7A484E16FDA8130000D203 /* Other */,
 			);
-			name = "Libraries & Frameworks";
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		089C1665FE841158C02AAC07 /* Resources */ = {
@@ -413,15 +410,16 @@
 			name = Source;
 			sourceTree = "<group>";
 		};
-		1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */ = {
+		1058C7B0FEA5585E11CA2CBB /* Apple */ = {
 			isa = PBXGroup;
 			children = (
 				79B96CA70A6360E00060AC12 /* SystemConfiguration.framework */,
 				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
 				277D77E1160380AF00906915 /* CFNetwork.framework */,
 				27D77E151672BD9B0091EF91 /* Security.framework */,
+				223FD094160B523700BE1C80 /* SenTestingKit.framework */,
 			);
-			name = "Linked Frameworks";
+			name = Apple;
 			sourceTree = "<group>";
 		};
 		223FD09C160B523700BE1C80 /* Tests */ = {
@@ -497,13 +495,11 @@
 			path = UnitTests;
 			sourceTree = "<group>";
 		};
-		22BF08FA16AF09B2009BE5A3 /* Modules */ = {
+		5F7A484E16FDA8130000D203 /* Other */ = {
 			isa = PBXGroup;
 			children = (
-				8008031E166A93DD004D39F5 /* c-ares */,
-				8008031816696329004D39F5 /* curl */,
 			);
-			name = Modules;
+			name = Other;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

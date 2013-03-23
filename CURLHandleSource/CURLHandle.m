@@ -11,7 +11,7 @@
 
 #import "NSString+CURLHandle.h"
 #import "NSURLRequest+CURLHandle.h"
-#import "CK2SSHCredential.h"
+#import "../SFTP/Sources/CK2SSHCredential.h"
 
 #include <SystemConfiguration/SystemConfiguration.h>
 
