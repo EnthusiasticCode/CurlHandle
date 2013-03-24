@@ -247,7 +247,7 @@
 		};
 		5F7A48F016FDCAD30000D203 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			files = (
 			);
 			inputPaths = (

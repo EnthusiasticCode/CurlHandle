@@ -30,12 +30,12 @@ cd "${ARCH_WORKING_DIR}"
 
 # Configure and build.
 export CC="clang -arch ${ARCH} -isysroot ${SDKROOT} -L${BUILT_PRODUCTS_DIR} -I${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH} -g -w"
-CFLAGS=("--host=${ARCH}-apple-darwin" "--with-sysroot=${SDKROOT}" "--enable-debug" "--enable-optimize" "--disable-warnings" "--disable-werror" "--disable-curldebug" "--disable-symbol-hiding" "--enable-nonblocking")
+CONFIGURE_ARGS=("--host=${ARCH}-apple-darwin" "--with-sysroot=${SDKROOT}" "--enable-debug" "--enable-optimize" "--disable-warnings" "--disable-werror" "--disable-curldebug" "--disable-symbol-hiding" "--enable-nonblocking")
 if [ "${PLATFORM_NAME}" == "macosx" ]
 then
-CFLAGS=("CFLAGS=-mmacosx-version-min=10.6" "${CONFIGURE_ARGS[@]}" "--enable-shared" "--disable-static")
+CONFIGURE_ARGS=("CFLAGS=-mmacosx-version-min=10.6" "${CONFIGURE_ARGS[@]}" "--enable-shared" "--disable-static")
 else
-CFLAGS=("${CONFIGURE_ARGS[@]}" "--enable-static" "--disable-shared")
+CONFIGURE_ARGS=("${CONFIGURE_ARGS[@]}" "--enable-static" "--disable-shared")
 fi
 
 ./buildconf
