@@ -9,7 +9,6 @@
 #import "CURLMulti.h"
 #import "CURLResponse.h"
 
-#import "NSString+CURLHandle.h"
 #import "NSURLRequest+CURLHandle.h"
 #import "../SFTP/Sources/CK2SSHCredential.h"
 
@@ -747,15 +746,8 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
                     NSURL *url = [[NSURL alloc] initWithString:urlString];
                     if (url)
                     {
-                        Class responseClass = ([NSHTTPURLResponse instancesRespondToSelector:@selector(initWithURL:statusCode:HTTPVersion:headerFields:)] ? [NSHTTPURLResponse class] : [CURLResponse class]);
-                        
-                        NSURLResponse *response = [[responseClass alloc] initWithURL:url
-                                                                          statusCode:code
-                                                                         HTTPVersion:[headerString headerHTTPVersion]
-                                                                        headerFields:[headerString allHTTPHeaderFields]];
-                        
+                        NSURLResponse *response = [CURLResponse responseWithURL:url statusCode:code headerString:headerString];
                         [self.delegate handle:self didReceiveResponse:response];
-                        [response release];
                         
                         [url release];
                     }
@@ -871,7 +863,7 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
     long responseCode;
     if (curl_easy_getinfo(_curl, CURLINFO_RESPONSE_CODE, &responseCode) == CURLE_OK && responseCode)
     {
-        [userInfo setObject:[NSNumber numberWithLong:responseCode] forKey:[NSNumber numberWithInt:CURLINFO_RESPONSE_CODE]];
+        [userInfo setObject:[NSNumber numberWithLong:responseCode] forKey:@(CURLINFO_RESPONSE_CODE)];
     }
     
     long osErrorNumber = 0;
