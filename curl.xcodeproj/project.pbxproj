@@ -67,7 +67,7 @@
 
 /* Begin PBXFileReference section */
 		5F7A48BE16FDC9F50000D203 /* libcurl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libcurl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		5F7A48C916FDCA040000D203 /* libcurl-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libcurl-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F7A48C916FDCA040000D203 /* libcurl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcurl.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F7A48D816FDCA5A0000D203 /* c-ares.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = "c-ares.xcodeproj"; sourceTree = "<group>"; };
 		5F7A48E116FDCA620000D203 /* libssh2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libssh2.xcodeproj; path = SFTP/libssh2.xcodeproj; sourceTree = "<group>"; };
 		5F7A48F516FDCB0A0000D203 /* build-curl.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "build-curl.sh"; sourceTree = "<group>"; };
@@ -87,7 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				5F7A48BE16FDC9F50000D203 /* libcurl.dylib */,
-				5F7A48C916FDCA040000D203 /* libcurl-iOS.a */,
+				5F7A48C916FDCA040000D203 /* libcurl.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -161,7 +161,7 @@
 			);
 			name = "curl-iOS";
 			productName = "curl-iOS";
-			productReference = 5F7A48C916FDCA040000D203 /* libcurl-iOS.a */;
+			productReference = 5F7A48C916FDCA040000D203 /* libcurl.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -204,14 +204,14 @@
 		5F7A48DE16FDCA5B0000D203 /* libc-ares.dylib */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";
-			path = "libc-ares.dylib";
+			path = libcares.dylib;
 			remoteRef = 5F7A48DD16FDCA5B0000D203 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		5F7A48E016FDCA5B0000D203 /* libc-ares-iOS.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libc-ares-iOS.a";
+			path = libcares.a;
 			remoteRef = 5F7A48DF16FDCA5B0000D203 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -225,7 +225,7 @@
 		5F7A48EA16FDCA640000D203 /* libssh2-iOS.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libssh2-iOS.a";
+			path = libssh2.a;
 			remoteRef = 5F7A48E916FDCA640000D203 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -369,7 +369,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRIVATE_HEADERS_FOLDER_PATH = include;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = curl;
 				PUBLIC_HEADERS_FOLDER_PATH = include;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -385,7 +385,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRIVATE_HEADERS_FOLDER_PATH = include;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = curl;
 				PUBLIC_HEADERS_FOLDER_PATH = include;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;

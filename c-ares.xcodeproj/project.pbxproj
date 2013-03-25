@@ -9,7 +9,7 @@
 /* Begin PBXFileReference section */
 		5F7A488C16FDC72E0000D203 /* libcares.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libcares.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F7A489F16FDC7EF0000D203 /* build-c-ares.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "build-c-ares.sh"; sourceTree = "<group>"; };
-		5F7A48A516FDC8900000D203 /* libcares-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libcares-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F7A48A516FDC8900000D203 /* libcares.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcares.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -26,7 +26,7 @@
 			isa = PBXGroup;
 			children = (
 				5F7A488C16FDC72E0000D203 /* libcares.dylib */,
-				5F7A48A516FDC8900000D203 /* libcares-iOS.a */,
+				5F7A48A516FDC8900000D203 /* libcares.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -76,7 +76,7 @@
 			);
 			name = "c-ares-iOS";
 			productName = "c-ares-iOS";
-			productReference = 5F7A48A516FDC8900000D203 /* libcares-iOS.a */;
+			productReference = 5F7A48A516FDC8900000D203 /* libcares.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -220,7 +220,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRIVATE_HEADERS_FOLDER_PATH = include;
-				PRODUCT_NAME = "cares-iOS";
+				PRODUCT_NAME = cares;
 				PUBLIC_HEADERS_FOLDER_PATH = include;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -236,7 +236,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRIVATE_HEADERS_FOLDER_PATH = include;
-				PRODUCT_NAME = "cares-iOS";
+				PRODUCT_NAME = cares;
 				PUBLIC_HEADERS_FOLDER_PATH = include;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;

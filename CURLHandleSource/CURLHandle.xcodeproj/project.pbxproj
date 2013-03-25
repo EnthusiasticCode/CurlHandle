@@ -73,6 +73,7 @@
 		5F7A492D16FFBC850000D203 /* CURLHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 79B96CBB0A6360F90060AC12 /* CURLHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F7A492E16FFBC850000D203 /* CURLProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 27229B3814C83905007D0FF1 /* CURLProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F7A492F16FFBC850000D203 /* NSURLRequest+CURLHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 2270F49F16108D44009B6F98 /* NSURLRequest+CURLHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5F7A49F61700733D0000D203 /* libcurl-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F7A490116FFAF410000D203 /* libcurl-iOS.a */; };
 		79B96CAC0A6360E00060AC12 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79B96CA70A6360E00060AC12 /* SystemConfiguration.framework */; };
 		79B96CBF0A6360F90060AC12 /* CURLHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 79B96CBB0A6360F90060AC12 /* CURLHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		79B96CC00A6360F90060AC12 /* CURLHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B96CBC0A6360F90060AC12 /* CURLHandle.m */; };
@@ -218,6 +219,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5F7A49F61700733D0000D203 /* libcurl-iOS.a in Frameworks */,
 				5F7A490F16FFB4190000D203 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -265,7 +267,6 @@
 			children = (
 				1058C7B0FEA5585E11CA2CBB /* Apple */,
 				5F7A484E16FDA8130000D203 /* Other */,
-				5F7A490E16FFB4190000D203 /* Foundation.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -307,6 +308,7 @@
 		1058C7B0FEA5585E11CA2CBB /* Apple */ = {
 			isa = PBXGroup;
 			children = (
+				5F7A490E16FFB4190000D203 /* Foundation.framework */,
 				79B96CA70A6360E00060AC12 /* SystemConfiguration.framework */,
 				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
 				277D77E1160380AF00906915 /* CFNetwork.framework */,
@@ -689,14 +691,11 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_PREFIX_HEADER = CURLHandle_Prefix.pch;
+				"HEADER_SEARCH_PATHS[arch=i386]" = "${BUILT_PRODUCTS_DIR}/include-${PLATFORM_NAME}-i386";
+				"HEADER_SEARCH_PATHS[arch=x86_64]" = "${BUILT_PRODUCTS_DIR}/include-${PLATFORM_NAME}-x86_64";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@rpath";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/../SFTP\"",
-				);
 				PRODUCT_NAME = CURLHandle;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -709,14 +708,11 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_PREFIX_HEADER = CURLHandle_Prefix.pch;
+				"HEADER_SEARCH_PATHS[arch=i386]" = "${BUILT_PRODUCTS_DIR}/include-${PLATFORM_NAME}-i386";
+				"HEADER_SEARCH_PATHS[arch=x86_64]" = "${BUILT_PRODUCTS_DIR}/include-${PLATFORM_NAME}-x86_64";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@rpath";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/../SFTP\"",
-				);
 				PRODUCT_NAME = CURLHandle;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -739,7 +735,6 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -761,7 +756,6 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -810,8 +804,10 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				"HEADER_SEARCH_PATHS[arch=armv7]" = "${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}-${PLATFORM_NAME}-armv7";
+				"HEADER_SEARCH_PATHS[arch=armv7s]" = "${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}-${PLATFORM_NAME}-armv7s";
+				"HEADER_SEARCH_PATHS[sdk=iphonesimulator*]" = "${BUILT_PRODUCTS_DIR}/include-${PLATFORM_NAME}-i386";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
-				OTHER_LDFLAGS = "-ObjC";
 				PRIVATE_HEADERS_FOLDER_PATH = "include/CURLHandle-private";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = include/CURLHandle;
@@ -833,8 +829,10 @@
 				DSTROOT = /tmp/CURLHandle_iOS.dst;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				"HEADER_SEARCH_PATHS[arch=armv7]" = "${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}-${PLATFORM_NAME}-armv7";
+				"HEADER_SEARCH_PATHS[arch=armv7s]" = "${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}-${PLATFORM_NAME}-armv7s";
+				"HEADER_SEARCH_PATHS[sdk=iphonesimulator*]" = "${BUILT_PRODUCTS_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}-${PLATFORM_NAME}-i386";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
-				OTHER_LDFLAGS = "-ObjC";
 				PRIVATE_HEADERS_FOLDER_PATH = "include/CURLHandle-private";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = include/CURLHandle;
@@ -881,6 +879,7 @@
 				5F7A491816FFB4190000D203 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
