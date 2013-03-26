@@ -73,7 +73,11 @@
 		5F7A492D16FFBC850000D203 /* CURLHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 79B96CBB0A6360F90060AC12 /* CURLHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F7A492E16FFBC850000D203 /* CURLProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 27229B3814C83905007D0FF1 /* CURLProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F7A492F16FFBC850000D203 /* NSURLRequest+CURLHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 2270F49F16108D44009B6F98 /* NSURLRequest+CURLHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5F7A49F61700733D0000D203 /* libcurl-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F7A490116FFAF410000D203 /* libcurl-iOS.a */; };
+		5F7A49F61700733D0000D203 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F7A490116FFAF410000D203 /* libcurl.a */; };
+		5F7A4A831701A79E0000D203 /* libcares.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F7A4A821701A79E0000D203 /* libcares.a */; };
+		5F7A4A871701A7A30000D203 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F7A4A861701A7A30000D203 /* libssh2.a */; };
+		5F7A4A891701A7A80000D203 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F7A4A881701A7A80000D203 /* libssl.a */; };
+		5F7A4A8B1701A7AD0000D203 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F7A4A8A1701A7AD0000D203 /* libcrypto.a */; };
 		79B96CAC0A6360E00060AC12 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79B96CA70A6360E00060AC12 /* SystemConfiguration.framework */; };
 		79B96CBF0A6360F90060AC12 /* CURLHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 79B96CBB0A6360F90060AC12 /* CURLHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		79B96CC00A6360F90060AC12 /* CURLHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B96CBC0A6360F90060AC12 /* CURLHandle.m */; };
@@ -192,6 +196,10 @@
 		5F7A48F616FFAF400000D203 /* curl.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = curl.xcodeproj; path = ../curl.xcodeproj; sourceTree = "<group>"; };
 		5F7A490D16FFB4190000D203 /* libCURLHandle-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libCURLHandle-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F7A490E16FFB4190000D203 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		5F7A4A821701A79E0000D203 /* libcares.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libcares.a; path = "../build/Release-iphoneos/libcares.a"; sourceTree = "<group>"; };
+		5F7A4A861701A7A30000D203 /* libssh2.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libssh2.a; path = "../SFTP/build/Release-iphoneos/libssh2.a"; sourceTree = "<group>"; };
+		5F7A4A881701A7A80000D203 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libssl.a; path = "../SFTP/build/Release-iphoneos/libssl.a"; sourceTree = "<group>"; };
+		5F7A4A8A1701A7AD0000D203 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libcrypto.a; path = "../SFTP/build/Release-iphoneos/libcrypto.a"; sourceTree = "<group>"; };
 		795946890AA88D0000EBF548 /* ResumableHTTPUploader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResumableHTTPUploader.h; sourceTree = "<group>"; };
 		7959468A0AA88D0000EBF548 /* ResumableHTTPUploader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResumableHTTPUploader.m; sourceTree = "<group>"; };
 		79B96CA70A6360E00060AC12 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = /System/Library/Frameworks/SystemConfiguration.framework; sourceTree = "<absolute>"; };
@@ -219,7 +227,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5F7A49F61700733D0000D203 /* libcurl-iOS.a in Frameworks */,
+				5F7A4A8B1701A7AD0000D203 /* libcrypto.a in Frameworks */,
+				5F7A4A891701A7A80000D203 /* libssl.a in Frameworks */,
+				5F7A4A871701A7A30000D203 /* libssh2.a in Frameworks */,
+				5F7A4A831701A79E0000D203 /* libcares.a in Frameworks */,
+				5F7A49F61700733D0000D203 /* libcurl.a in Frameworks */,
 				5F7A490F16FFB4190000D203 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -394,7 +406,10 @@
 		5F7A484E16FDA8130000D203 /* Other */ = {
 			isa = PBXGroup;
 			children = (
-				5F7A48F616FFAF400000D203 /* curl.xcodeproj */,
+				5F7A4A921701A7DA0000D203 /* openssl */,
+				5F7A4A911701A7D30000D203 /* libssh2 */,
+				5F7A4A901701A7CD0000D203 /* c-ares */,
+				5F7A4A8C1701A7BA0000D203 /* curl */,
 			);
 			name = Other;
 			sourceTree = "<group>";
@@ -403,7 +418,7 @@
 			isa = PBXGroup;
 			children = (
 				5F7A48FF16FFAF410000D203 /* libcurl.dylib */,
-				5F7A490116FFAF410000D203 /* libcurl-iOS.a */,
+				5F7A490116FFAF410000D203 /* libcurl.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -417,6 +432,39 @@
 				7959468A0AA88D0000EBF548 /* ResumableHTTPUploader.m */,
 			);
 			name = Extras;
+			sourceTree = "<group>";
+		};
+		5F7A4A8C1701A7BA0000D203 /* curl */ = {
+			isa = PBXGroup;
+			children = (
+				5F7A48F616FFAF400000D203 /* curl.xcodeproj */,
+			);
+			name = curl;
+			sourceTree = "<group>";
+		};
+		5F7A4A901701A7CD0000D203 /* c-ares */ = {
+			isa = PBXGroup;
+			children = (
+				5F7A4A821701A79E0000D203 /* libcares.a */,
+			);
+			name = "c-ares";
+			sourceTree = "<group>";
+		};
+		5F7A4A911701A7D30000D203 /* libssh2 */ = {
+			isa = PBXGroup;
+			children = (
+				5F7A4A861701A7A30000D203 /* libssh2.a */,
+			);
+			name = libssh2;
+			sourceTree = "<group>";
+		};
+		5F7A4A921701A7DA0000D203 /* openssl */ = {
+			isa = PBXGroup;
+			children = (
+				5F7A4A8A1701A7AD0000D203 /* libcrypto.a */,
+				5F7A4A881701A7A80000D203 /* libssl.a */,
+			);
+			name = openssl;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -556,10 +604,10 @@
 			remoteRef = 5F7A48FE16FFAF410000D203 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		5F7A490116FFAF410000D203 /* libcurl-iOS.a */ = {
+		5F7A490116FFAF410000D203 /* libcurl.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libcurl-iOS.a";
+			path = libcurl.a;
 			remoteRef = 5F7A490016FFAF410000D203 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
