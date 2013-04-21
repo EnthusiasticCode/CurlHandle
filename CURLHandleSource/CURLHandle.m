@@ -1,13 +1,17 @@
 //
 //  CURLHandle.m
+//  CURLHandle
 //
 //  Created by Dan Wood <dwood@karelia.com> on Fri Jun 22 2001.
-//  This is in the public domain, but please report any improvements back to the author.
+//  Copyright (c) 2013 Karelia Software. All rights reserved.
 //
 
 #import "CURLHandle.h"
+#import "CURLHandle+MultiSupport.h"
+#import "CURLHandle+TestingSupport.h"
 #import "CURLMulti.h"
 #import "CURLResponse.h"
+#import "CURLList.h"
 
 #import "NSURLRequest+CURLHandle.h"
 #import "../SFTP/Sources/CK2SSHCredential.h"
@@ -60,54 +64,25 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
                                   enum curl_khmatch, /* libcurl's view on the keys */
                                   CURLHandle *self); /* custom pointer passed from app */
 
-@interface CURLHandle()
+#pragma mark - Private API
 
-#pragma mark - Private Methods
+@interface CURLHandle()
 
 - (size_t) curlReceiveDataFrom:(void *)inPtr size:(size_t)inSize number:(size_t)inNumber isHeader:(BOOL)header;
 - (size_t) curlSendDataTo:(void *)inPtr size:(size_t)inSize number:(size_t)inNumber;
 
-#pragma mark - Private Properties
-
-// TODO: Might be worth splitting out a class to manage curl_slists
-@property (readonly, nonatomic) struct curl_slist* httpHeaders;
-- (void)addHttpHeader:(NSString *)header;
-@property (readonly, nonatomic) struct curl_slist* preQuoteCommands;
-- (void)addPreQuoteCommand:(NSString *)command;
-@property (readonly, nonatomic) struct curl_slist* postQuoteCommands;
-- (void)addPostQuoteCommand:(NSString *)command;
-
-// As an asynchronous API, CURLHandle retains its delegate until the request is finished, failed, or cancelled. Much like NSURLConnection
-@property (strong, nonatomic) id <CURLHandleDelegate> delegate;
+@property (strong, nonatomic) NSMutableArray* lists;
+@property (strong, nonatomic) id <CURLHandleDelegate> delegate; // As an asynchronous API, CURLHandle retains its delegate until the request is finished, failed, or cancelled. Much like NSURLConnection
 @property (strong, nonatomic) CURLMulti* multi;
+
 @end
 
 
 @implementation CURLHandle
 
 @synthesize delegate = _delegate;
-
-#pragma mark curl_slist Accessor Methods
-
-@synthesize httpHeaders = _httpHeaders;
+@synthesize lists = _lists;
 @synthesize multi = _multi;
-@synthesize preQuoteCommands = _preQuoteCommands;
-@synthesize postQuoteCommands = _postQuoteCommands;
-
-- (void)addHttpHeader:(NSString *)header;
-{
-    _httpHeaders = curl_slist_append(_httpHeaders, [header UTF8String]);
-}
-
-- (void)addPreQuoteCommand:(NSString *)command;
-{
-    _preQuoteCommands = curl_slist_append(_preQuoteCommands, [command UTF8String]);
-}
-
-- (void)addPostQuoteCommand:(NSString *)command;
-{
-    _postQuoteCommands = curl_slist_append(_postQuoteCommands, [command UTF8String]);
-}
 
 
 /*"	CURLHandle is a wrapper around a CURL.
@@ -118,7 +93,7 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
 	The idea is to have it handle http and possibly other schemes too.  At this time
 	we don't support writing data (via HTTP PUT) and special situations such as HTTPS and
 	firewall proxies haven't been tried out yet.
-	
+
 	This class maintains only basic functionality, any "bells and whistles" should be
 	defined in a category to keep this file as simple as possible.
 
@@ -146,7 +121,7 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
 	{
 		NSLog(@"Didn't curl_global_init, result = %d",rc);
 	}
-	
+
 #if !TARGET_OS_IPHONE
 	// Now initialize System Config. I have no idea why this signature; it's just what was in tester app
 	sSCDSRef = SCDynamicStoreCreate(NULL,CFSTR("XxXx"),NULL, NULL);
@@ -202,12 +177,12 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
         {
             multi = [CURLMulti sharedInstance];
         }
-        
+
         self.delegate = delegate;
 
         // Turn automatic redirects off by default, so can properly report them to delegate
         curl_easy_setopt([self curl], CURLOPT_FOLLOWLOCATION, NO);
-                
+
         CURLcode code = [self setupRequest:request credential:credential];
         if (code == CURLE_OK)
         {
@@ -219,13 +194,15 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
             [self failWithCode:code isMulti:NO];
         }
     }
-    
+
     return self;
 }
 
 
 - (void) dealloc
 {
+    NSAssert(_multi == nil, @"by the time we're thrown away, any multi should be done with us");
+
     [self cleanupIncludingHandle:YES];
 
     [_delegate release];
@@ -235,7 +212,7 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
     [_uploadStream release];
 
     CURLHandleLog(@"dealloced");
-    
+
 	[super dealloc];
 }
 
@@ -264,218 +241,197 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
 }
 
 
-// -----------------------------------------------------------------------------
-#pragma mark Loading a Request
-// -----------------------------------------------------------------------------
+#pragma mark - Setup
 
-/*""*/
+#define RETURN_IF_FAILED(value) if ((code = (value)) != CURLE_OK) return code;
 
-#define LOAD_REQUEST_SET_OPTION(option, parameter) if ((code = curl_easy_setopt(_curl, option, parameter)) != CURLE_OK) return code;
-
-- (CURLcode)setupRequest:(NSURLRequest *)request credential:(NSURLCredential *)credential
+- (CURLcode)setOption:(CURLoption)option data:(CURLoption)data function:(void*)function
 {
-    NSAssert(_executing == NO, @"CURLHandle instances may not be accessed on multiple threads at once, or re-entrantly");
-    _executing = YES;
+    CURLcode code = curl_easy_setopt(_curl, option, function);
+    if (code == CURLE_OK)
+    {
+        code = (curl_easy_setopt(_curl, data, self));
+    }
 
-    curl_easy_reset([self curl]);
+    return code;
+}
 
-    _URL = [[request URL] copy];    // assumes caller will have ensured _URL is suitable for overwriting
-    
+- (CURLcode)setOption:(CURLoption)option string:(NSString*)string
+{
+    CURLcode code = curl_easy_setopt(_curl, option, [string UTF8String]);
+
+    return code;
+}
+
+- (CURLcode)setOption:(CURLoption)option number:(NSNumber*)number
+{
+    CURLcode code = CURLE_OK;
+    if (number)
+    {
+        code = curl_easy_setopt(_curl, option, [number longValue]);
+    }
+
+    return code;
+}
+
+- (CURLcode)setOption:(CURLoption)option url:(NSURL*)url justPath:(BOOL)justPath
+{
+    NSString* string = justPath ? [url path] : [url absoluteString];
+    CURLcode code = curl_easy_setopt(_curl, option, [string UTF8String]);
+
+    return code;
+}
+
+- (CURLcode)setOption:(CURLoption)option withContentsOfArray:(NSArray*)array
+{
+    CURLcode result = CURLE_OK;
+    if ([array count])
+    {
+        // make a curl list with the values in the array
+        CURLList* values = [CURLList listWithArray:array];
+        result = curl_easy_setopt(_curl, option, values.list);
+
+        // hang on to the list until the handle is done
+        if (!self.lists)
+            self.lists = [NSMutableArray arrayWithObject:values];
+        else
+            [self.lists addObject:values];
+    }
+
+    return result;
+}
+
+- (CURLcode)setupProxyOptionsForRequest:(NSURLRequest *)request
+{
     CURLcode code = CURLE_OK;
 
-    // SET OPTIONS -- NOTE THAT WE DON'T SET ANY STRINGS DIRECTLY AT THIS STAGE.
-    // Put error messages here
-    LOAD_REQUEST_SET_OPTION(CURLOPT_ERRORBUFFER, &_errorBuffer);
+    NSString *proxyHost = nil;
+    NSNumber *proxyPort = nil;
+    NSString *scheme = [[[request URL] scheme] lowercaseString];
 
-    LOAD_REQUEST_SET_OPTION(CURLOPT_FOLLOWLOCATION, YES);
-    LOAD_REQUEST_SET_OPTION(CURLOPT_FAILONERROR, YES);
-
-    // send all data to the C function
-    LOAD_REQUEST_SET_OPTION(CURLOPT_SOCKOPTFUNCTION, curlSocketOptFunction);
-    LOAD_REQUEST_SET_OPTION(CURLOPT_SOCKOPTDATA, self);
-
-    LOAD_REQUEST_SET_OPTION(CURLOPT_WRITEFUNCTION, curlBodyFunction);
-    LOAD_REQUEST_SET_OPTION(CURLOPT_HEADERFUNCTION, curlHeaderFunction);
-    LOAD_REQUEST_SET_OPTION(CURLOPT_READFUNCTION, curlReadFunction);
-    // pass self to the callback
-    LOAD_REQUEST_SET_OPTION(CURLOPT_HEADERDATA, self);
-    LOAD_REQUEST_SET_OPTION(CURLOPT_WRITEDATA, self);
-    LOAD_REQUEST_SET_OPTION(CURLOPT_READDATA, self);
-
-    LOAD_REQUEST_SET_OPTION(CURLOPT_VERBOSE, 1);
-    LOAD_REQUEST_SET_OPTION(CURLOPT_DEBUGFUNCTION, curlDebugFunction);
-    LOAD_REQUEST_SET_OPTION(CURLOPT_DEBUGDATA, self);
-
-    // store self in the private data, so that we can turn an easy handle back into a CURLHandle object
-    LOAD_REQUEST_SET_OPTION(CURLOPT_PRIVATE, self);
-
-    /*"	Zero disables connection timeout (it
-     will then only timeout on the system's internal
-     timeouts).
-
-     According to man 3 curl_easy_setopt, CURLOPT_CONNECTTIMEOUT uses signals and thus isn't thread-safe. However, in the same man page it's stated that if you TURN OFF SIGNALLING, you can still use CURLOPT_CONNECTTIMEOUT! This will DISABLE any features that use signals, so beware! (But turning off the connection timeout by setting to zero will turn it back on.)
-
-     CURLOPT_TIMEOUT is for how long the entire transfer takes, which doesn't match up to -timeoutInterval's definition. I'm leaving it out for now. Perhaps a progress callback, or minimum transfer speed requirement could manage the eventuality of a transfer hanging mid-way.
-
-     "*/
-
-    long timeout = (long)[request timeoutInterval];
-    LOAD_REQUEST_SET_OPTION(CURLOPT_NOSIGNAL, timeout != 0);
-    LOAD_REQUEST_SET_OPTION(CURLOPT_CONNECTTIMEOUT, timeout);
-    //LOAD_REQUEST_SET_OPTION(CURLOPT_TIMEOUT, timeout);
-
-    // Make FTP response time shorter so that when faced with a server which turns out not to receive EPSV connections, can fall back to PASV in time
-    // It seems that on OS X 10.6, this behaves as the maximum time a transfer can take, likely killing the connection for large files, so don't want it. Not supporting EPSV at present anyhow
-    //LOAD_REQUEST_SET_OPTION(CURLOPT_FTP_RESPONSE_TIMEOUT, 0.5 * timeout);
-
-    
-    // SSH Known Hosts
-    LOAD_REQUEST_SET_OPTION(CURLOPT_SSH_KNOWNHOSTS, [[[request curl_SSHKnownHostsFileURL] path] UTF8String]);
-    LOAD_REQUEST_SET_OPTION(CURLOPT_SSH_KEYDATA, self);
-    LOAD_REQUEST_SET_OPTION(CURLOPT_SSH_KEYFUNCTION, curlKnownHostsFunction);
-    
-
-    // Set the credential
-    if (credential)
+    // Allocate and keep the proxy dictionary
+    if (nil == _proxies)
     {
-        NSString *username = [credential user];
-        LOAD_REQUEST_SET_OPTION(CURLOPT_USERNAME, [username UTF8String]);
-        
-        NSURL *privateKey = [credential ck2_privateKeyURL];
-        LOAD_REQUEST_SET_OPTION(CURLOPT_SSH_PUBLIC_KEYFILE, [[privateKey path] UTF8String]);
-        
-        NSURL *publicKey = [credential ck2_publicKeyURL];
-        LOAD_REQUEST_SET_OPTION(CURLOPT_SSH_PUBLIC_KEYFILE, [[publicKey path] UTF8String]);
-        
-        NSString *password = [credential password];
-        if (privateKey)
+        _proxies = (NSDictionary *) SCDynamicStoreCopyProxies(sSCDSRef);
+    }
+
+
+    if (_proxies
+        && [scheme isEqualToString:@"http"]
+        && [[_proxies objectForKey:(NSString *)kSCPropNetProxiesHTTPEnable] boolValue] )
+    {
+        proxyHost = (NSString *) [_proxies objectForKey:(NSString *)kSCPropNetProxiesHTTPProxy];
+        proxyPort = (NSNumber *)[_proxies objectForKey:(NSString *)kSCPropNetProxiesHTTPPort];
+    }
+
+    if (_proxies
+        && [scheme isEqualToString:@"https"]
+        && [[_proxies objectForKey:(NSString *)kSCPropNetProxiesHTTPSEnable] boolValue] )
+    {
+        proxyHost = (NSString *) [_proxies objectForKey:(NSString *)kSCPropNetProxiesHTTPSProxy];
+        proxyPort = (NSNumber *)[_proxies objectForKey:(NSString *)kSCPropNetProxiesHTTPSPort];
+    }
+
+    if (_proxies
+        && [scheme isEqualToString:@"ftp"]
+        && [[_proxies objectForKey:(NSString *)kSCPropNetProxiesFTPEnable] boolValue] )
+    {
+        proxyHost = (NSString *) [_proxies objectForKey:(NSString *)kSCPropNetProxiesFTPProxy];
+        proxyPort = (NSNumber *)[_proxies objectForKey:(NSString *)kSCPropNetProxiesFTPPort];
+    }
+
+    if (proxyHost && proxyPort)
+    {
+        RETURN_IF_FAILED([self setOption:CURLOPT_PROXY string:proxyHost]);
+        RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_PROXYPORT, [proxyPort longValue]));
+
+        // Now, provide a user/password if one is globally set.
+        if (nil != sProxyUserIDAndPassword)
         {
-            LOAD_REQUEST_SET_OPTION(CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PUBLICKEY);
-            LOAD_REQUEST_SET_OPTION(CURLOPT_KEYPASSWD, [password UTF8String]);
-        }
-        else if (credential.ck2_isPublicKeyCredential)
-        {
-            LOAD_REQUEST_SET_OPTION(CURLOPT_SSH_AUTH_TYPES, (1<<4));    // want to use CURLSSH_AUTH_AGENT, but can't get Xcode to recognise the header
-        }
-        else
-        {
-            LOAD_REQUEST_SET_OPTION(CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD|CURLSSH_AUTH_KEYBOARD);
-            LOAD_REQUEST_SET_OPTION(CURLOPT_PASSWORD, [password UTF8String]);
+            RETURN_IF_FAILED([self setOption:CURLOPT_PROXYUSERPWD string:sProxyUserIDAndPassword]);
         }
     }
-    
-#if !TARGET_OS_IPHONE
-    // Set the proxy info.  Ignore errors -- just don't do proxy if errors.
-    if (sAllowsProxy)	// normally this is YES.
+
+    return code;
+}
+
+- (CURLcode)setupOptionsForCredential:(NSURLCredential*)credential
+{
+    CURLcode code;
+
+    NSString *username = [credential user];
+    NSString *password = [credential password];
+    NSURL* privateKey = [credential ck2_privateKeyURL];
+
+    RETURN_IF_FAILED([self setOption:CURLOPT_USERNAME string:username]);
+    RETURN_IF_FAILED([self setOption:CURLOPT_SSH_PRIVATE_KEYFILE url:privateKey justPath:YES]);
+    RETURN_IF_FAILED([self setOption:CURLOPT_SSH_PUBLIC_KEYFILE url:[credential ck2_publicKeyURL] justPath:YES]);
+    if (privateKey)
     {
-        NSString *proxyHost = nil;
-        NSNumber *proxyPort = nil;
-        NSString *scheme = [[[request URL] scheme] lowercaseString];
-
-        // Allocate and keep the proxy dictionary
-        if (nil == _proxies)
-        {
-            _proxies = (NSDictionary *) SCDynamicStoreCopyProxies(sSCDSRef);
-        }
-
-
-        if (_proxies
-            && [scheme isEqualToString:@"http"]
-            && [[_proxies objectForKey:(NSString *)kSCPropNetProxiesHTTPEnable] boolValue] )
-        {
-            proxyHost = (NSString *) [_proxies objectForKey:(NSString *)kSCPropNetProxiesHTTPProxy];
-            proxyPort = (NSNumber *)[_proxies objectForKey:(NSString *)kSCPropNetProxiesHTTPPort];
-        }
-        if (_proxies
-            && [scheme isEqualToString:@"https"]
-            && [[_proxies objectForKey:(NSString *)kSCPropNetProxiesHTTPSEnable] boolValue] )
-        {
-            proxyHost = (NSString *) [_proxies objectForKey:(NSString *)kSCPropNetProxiesHTTPSProxy];
-            proxyPort = (NSNumber *)[_proxies objectForKey:(NSString *)kSCPropNetProxiesHTTPSPort];
-        }
-
-        if (_proxies
-            && [scheme isEqualToString:@"ftp"]
-            && [[_proxies objectForKey:(NSString *)kSCPropNetProxiesFTPEnable] boolValue] )
-        {
-            proxyHost = (NSString *) [_proxies objectForKey:(NSString *)kSCPropNetProxiesFTPProxy];
-            proxyPort = (NSNumber *)[_proxies objectForKey:(NSString *)kSCPropNetProxiesFTPPort];
-        }
-
-        if (proxyHost && proxyPort)
-        {
-            LOAD_REQUEST_SET_OPTION(CURLOPT_PROXY, [proxyHost UTF8String]);
-            LOAD_REQUEST_SET_OPTION(CURLOPT_PROXYPORT, [proxyPort longValue]);
-
-            // Now, provide a user/password if one is globally set.
-            if (nil != sProxyUserIDAndPassword)
-            {
-                LOAD_REQUEST_SET_OPTION(CURLOPT_PROXYUSERPWD, [sProxyUserIDAndPassword UTF8String]);
-            }
-        }
+        RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PUBLICKEY));
+        RETURN_IF_FAILED([self setOption:CURLOPT_KEYPASSWD string:password]);
     }
-#endif // !TARGET_OS_IPHONE
-
-    // HTTP method
-    NSString *method = [request HTTPMethod];
-    if ([method isEqualToString:@"GET"])
+    else if (credential.ck2_isPublicKeyCredential)
     {
-        LOAD_REQUEST_SET_OPTION(CURLOPT_HTTPGET, 1);
-    }
-    else if ([method isEqualToString:@"HEAD"])
-    {
-        LOAD_REQUEST_SET_OPTION(CURLOPT_NOBODY, 1);
-    }
-    else if ([method isEqualToString:@"PUT"])
-    {
-        LOAD_REQUEST_SET_OPTION(CURLOPT_UPLOAD, 1L);
-    }
-    else if ([method isEqualToString:@"POST"])
-    {
-        LOAD_REQUEST_SET_OPTION(CURLOPT_POST, 1);
+        RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_SSH_AUTH_TYPES, (1<<4)));    // want to use CURLSSH_AUTH_AGENT, but can't get Xcode to recognise the header
     }
     else
     {
-        LOAD_REQUEST_SET_OPTION(CURLOPT_CUSTOMREQUEST, [method UTF8String]);
+        RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_SSH_AUTH_TYPES, CURLSSH_AUTH_PASSWORD|CURLSSH_AUTH_KEYBOARD));
+        RETURN_IF_FAILED([self setOption:CURLOPT_PASSWORD string:password]);
     }
 
-    // Set the HTTP Headers.  (These will override options set with above)
+    return code;
+}
+
+- (CURLcode)setupHeadersForRequest:(NSURLRequest*)request
+{
+    CURLcode code = CURLE_OK;
+
+    NSDictionary* allFields = [request allHTTPHeaderFields];
+    NSMutableArray* headers = [NSMutableArray arrayWithCapacity:[allFields count]];
+    for (NSString *field in allFields)
     {
-        for (NSString *aHeaderField in [request allHTTPHeaderFields])
+        NSString *value = [request valueForHTTPHeaderField:field];
+
+        // Range requests are a special case that should inform Curl directly
+        if ([field caseInsensitiveCompare:@"Range"] == NSOrderedSame)
         {
-            NSString *theValue = [request valueForHTTPHeaderField:aHeaderField];
-
-            // Range requests are a special case that should inform Curl directly
-            if ([aHeaderField caseInsensitiveCompare:@"Range"] == NSOrderedSame)
+            NSRange bytesPrefixRange = [value rangeOfString:@"bytes=" options:NSAnchoredSearch];
+            if (bytesPrefixRange.location != NSNotFound)
             {
-                NSRange bytesPrefixRange = [theValue rangeOfString:@"bytes=" options:NSAnchoredSearch];
-                if (bytesPrefixRange.location != NSNotFound)
-                {
-                    LOAD_REQUEST_SET_OPTION(CURLOPT_RANGE, [[theValue substringFromIndex:bytesPrefixRange.length] UTF8String]);
-                }
-            }
-
-            // Accept-Encoding requests are also special
-            else if ([aHeaderField caseInsensitiveCompare:@"Accept-Encoding"] == NSOrderedSame)
-            {
-                LOAD_REQUEST_SET_OPTION(CURLOPT_ENCODING, [theValue UTF8String]);
-            }
-
-            else
-            {
-                NSString *pair = [NSString stringWithFormat:@"%@: %@",aHeaderField,theValue];
-                [self addHttpHeader:pair];
+                RETURN_IF_FAILED([self setOption:CURLOPT_RANGE string:[value substringFromIndex:bytesPrefixRange.length]]);
             }
         }
-        LOAD_REQUEST_SET_OPTION(CURLOPT_HTTPHEADER, self.httpHeaders);
+
+        // Accept-Encoding requests are also special
+        else if ([field caseInsensitiveCompare:@"Accept-Encoding"] == NSOrderedSame)
+        {
+            RETURN_IF_FAILED([self setOption:CURLOPT_ENCODING string:value]);
+        }
+
+        else
+        {
+            NSString *pair = [NSString stringWithFormat:@"%@: %@", field, value];
+            [headers addObject:pair];
+        }
     }
+
+    RETURN_IF_FAILED([self setOption:CURLOPT_HTTPHEADER withContentsOfArray:headers]);
+
+    return code;
+}
+
+- (CURLcode)setupUploadForRequest:(NSURLRequest*)request
+{
+    CURLcode code = CURLE_OK;
 
     // Set the upload data
     NSData *uploadData = [request HTTPBody];
     if (uploadData)
     {
         _uploadStream = [[NSInputStream alloc] initWithData:uploadData];
-        LOAD_REQUEST_SET_OPTION(CURLOPT_INFILESIZE, [uploadData length]);
+        RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_INFILESIZE, [uploadData length]));
     }
     else
     {
@@ -485,62 +441,103 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
     if (_uploadStream)
     {
         [_uploadStream open];
-        LOAD_REQUEST_SET_OPTION(CURLOPT_UPLOAD, 1L);
+        RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_UPLOAD, 1L));
     }
     else
     {
-        LOAD_REQUEST_SET_OPTION(CURLOPT_UPLOAD, 0);
+        RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_UPLOAD, 0));
     }
 
-    // SSL
-    LOAD_REQUEST_SET_OPTION(CURLOPT_USE_SSL, (long)[request curl_desiredSSLLevel]);
-    //LOAD_REQUEST_SET_OPTION(CURLOPT_CERTINFO, 1L);    // isn't supported by Darwin-SSL backend yet
-    LOAD_REQUEST_SET_OPTION(CURLOPT_SSL_VERIFYPEER, (long)[request curl_shouldVerifySSLCertificate]);
+    return code;
+}
 
-    // Intermediate directories
-    LOAD_REQUEST_SET_OPTION(CURLOPT_FTP_CREATE_MISSING_DIRS, [request curl_createIntermediateDirectories] ? 2 : 0);
-    
-    
-    // Permissions
-    NSNumber *permissions = [request curl_newFilePermissions];
-    if (permissions) LOAD_REQUEST_SET_OPTION(CURLOPT_NEW_FILE_PERMS, [permissions longValue]);
-    
-    permissions = [request curl_newDirectoryPermissions];
-    if (permissions) LOAD_REQUEST_SET_OPTION(CURLOPT_NEW_DIRECTORY_PERMS, [permissions longValue]);
-    
+- (CURLcode)setupMethodForRequest:(NSURLRequest *)request
+{
+    CURLcode code = CURLE_OK;
 
-    // Pre-quote
-    for (NSString *aCommand in [request curl_preTransferCommands])
+    NSString *method = [request HTTPMethod];
+    if ([method isEqualToString:@"GET"])
     {
-        [self addPreQuoteCommand:aCommand];
+        RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_HTTPGET, 1));
     }
-    if (self.preQuoteCommands)
+    else if ([method isEqualToString:@"HEAD"])
     {
-        LOAD_REQUEST_SET_OPTION(CURLOPT_PREQUOTE, self.preQuoteCommands);
+        RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_NOBODY, 1));
+    }
+    else if ([method isEqualToString:@"PUT"])
+    {
+        RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_UPLOAD, 1L));
+    }
+    else if ([method isEqualToString:@"POST"])
+    {
+        RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_POST, 1));
+    }
+    else
+    {
+        RETURN_IF_FAILED([self setOption:CURLOPT_CUSTOMREQUEST string:method]);
     }
 
-    // Post-quote
-    for (NSString *aCommand in [request curl_postTransferCommands])
-    {
-        [self addPostQuoteCommand:aCommand];
-    }
-    if (self.postQuoteCommands)
-    {
-        LOAD_REQUEST_SET_OPTION(CURLOPT_POSTQUOTE, self.postQuoteCommands);
-    }
-    
-    
-    // Disable EPSV for FTP transfers. I've found that some servers claim to support EPSV but take a very long time to respond to it, if at all, often causing the overall connection to fail. Note IPv6 connections will ignore this and use EPSV anyway
-    LOAD_REQUEST_SET_OPTION(CURLOPT_FTP_USE_EPSV, 0);
+    return code;
+}
 
-    // Set the URL
-    LOAD_REQUEST_SET_OPTION(CURLOPT_URL, [[[request URL] absoluteString] UTF8String]);
+- (CURLcode)setupRequest:(NSURLRequest *)request credential:(NSURLCredential *)credential
+{
+    NSAssert(_executing == NO, @"CURLHandle instances may not be accessed on multiple threads at once, or re-entrantly");
+    _executing = YES;
 
-    // clear the buffers
-    [_headerBuffer setLength:0];	// empty out header buffer
+    curl_easy_reset([self curl]);
+
+    _URL = [[request URL] copy];    // assumes caller will have ensured _URL is suitable for overwriting
+    [_headerBuffer setLength:0];
+
+    CURLcode code = CURLE_OK;
+
+    // most crucially, the URL...
+    RETURN_IF_FAILED([self setOption:CURLOPT_URL url:[request URL] justPath:NO]);
+
+    // misc settings
+    RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_ERRORBUFFER, &_errorBuffer));
+    RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_FOLLOWLOCATION, YES));
+    RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_FAILONERROR, YES));
+    RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_VERBOSE, 1));
+    RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_PRIVATE, self));       // store self in the private data, so that we can turn an easy handle back into a CURLHandle object
+    RETURN_IF_FAILED([self setOption:CURLOPT_SSH_KNOWNHOSTS url:[request curl_SSHKnownHostsFileURL] justPath:YES]);
+    RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_FTP_CREATE_MISSING_DIRS, [request curl_createIntermediateDirectories] ? 2 : 0));
+    RETURN_IF_FAILED([self setOption:CURLOPT_NEW_FILE_PERMS number:[request curl_newFilePermissions]]);
+    RETURN_IF_FAILED([self setOption:CURLOPT_NEW_DIRECTORY_PERMS number:[request curl_newDirectoryPermissions]]);
+    RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_USE_SSL, (long)[request curl_desiredSSLLevel]));
+    //RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_CERTINFO, 1L);    // isn't supported by Darwin-SSL backend yet
+    RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_SSL_VERIFYPEER, (long)[request curl_shouldVerifySSLCertificate]));
+    RETURN_IF_FAILED(curl_easy_setopt(_curl, CURLOPT_FTP_USE_EPSV, 0));     // Disable EPSV for FTP transfers. I've found that some servers claim to support EPSV but take a very long time to respond to it, if at all, often causing the overall connection to fail. Note IPv6 connections will ignore this and use EPSV anyway
+
+    // functions
+    RETURN_IF_FAILED([self setOption:CURLOPT_SOCKOPTFUNCTION data:CURLOPT_SOCKOPTDATA function:curlSocketOptFunction]);
+    RETURN_IF_FAILED([self setOption:CURLOPT_WRITEFUNCTION data:CURLOPT_WRITEDATA function:curlBodyFunction]);
+    RETURN_IF_FAILED([self setOption:CURLOPT_HEADERFUNCTION data:CURLOPT_HEADERDATA function:curlHeaderFunction]);
+    RETURN_IF_FAILED([self setOption:CURLOPT_READFUNCTION data:CURLOPT_READDATA function:curlReadFunction]);
+    RETURN_IF_FAILED([self setOption:CURLOPT_DEBUGFUNCTION data:CURLOPT_DEBUGDATA function:curlDebugFunction]);
+    RETURN_IF_FAILED([self setOption:CURLOPT_SSH_KEYFUNCTION data:CURLOPT_SSH_KEYDATA function:curlKnownHostsFunction]);
+
+    if (credential)
+    {
+        RETURN_IF_FAILED([self setupOptionsForCredential:credential]);
+    }
+
+    if (sAllowsProxy)	// normally this is YES.
+    {
+        RETURN_IF_FAILED([self setupProxyOptionsForRequest:request]);
+    }
+
+    RETURN_IF_FAILED([self setupMethodForRequest:request]);
+    RETURN_IF_FAILED([self setupHeadersForRequest:request]);
+    RETURN_IF_FAILED([self setupUploadForRequest:request]);
+    RETURN_IF_FAILED([self setOption:CURLOPT_PREQUOTE withContentsOfArray:[request curl_preTransferCommands]]);
+    RETURN_IF_FAILED([self setOption:CURLOPT_POSTQUOTE withContentsOfArray:[request curl_postTransferCommands]]);
 
     return CURLE_OK;
 }
+
+#pragma mark - Cleanup
 
 - (void)cleanupIncludingHandle:(BOOL)cleanupHandleToo;
 {
@@ -558,39 +555,280 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
         //
         // Additionally, it ought to be done anyway since we're clearing away the curl_slists that the handle currently references
         curl_easy_reset(_curl);
-        
+
         if (cleanupHandleToo)
         {
             curl_easy_cleanup(_curl);
             _curl = NULL;
         }
     }
-    
+
     if (_uploadStream)
     {
         [_uploadStream close];
     }
 
-    if (_httpHeaders)
-    {
-        curl_slist_free_all(_httpHeaders);
-        _httpHeaders = NULL;
-    }
-    
-    if (_preQuoteCommands)
-    {
-        curl_slist_free_all(_preQuoteCommands);
-        _preQuoteCommands = NULL;
-    }
-
-    if (_postQuoteCommands)
-    {
-        curl_slist_free_all(_postQuoteCommands);
-        _postQuoteCommands = NULL;
-    }
+    [self.lists removeAllObjects];
 
     _executing = NO;
 }
+
+#pragma mark - Completion
+
+- (void)cancel;
+{
+    CURLHandleLog(@"cancelled");
+
+    // setting the delegate to nil ensures that we don't send any more delegate messages, and
+    // also tells anything internal that wants to know that we've been cancelled
+    self.delegate = nil;
+
+    if (self.multi)
+    {
+        [self.multi stopManagingHandle:self];
+    }
+}
+
+
+- (void)completeWithCode:(NSInteger)code isMulti:(BOOL)isMultiCode
+{
+    CURLHandleLog(@"completed with %@ code %d", code, isMulti ? @"multi" : @"easy");
+
+    if (code == (isMultiCode ? CURLM_OK : CURLE_OK))
+    {
+        [self finish];
+    }
+    else
+    {
+        [self failWithCode:code isMulti:isMultiCode];
+    }
+
+    [self cleanupIncludingHandle:YES];
+}
+
+- (void)finish;
+{
+    CURLHandleLog(@"finished");
+    [self notifyDelegateOfResponseIfNeeded];
+    if ([_delegate respondsToSelector:@selector(handleDidFinish:)])
+    {
+        [self.delegate handleDidFinish:self];
+    }
+}
+
+- (void)failWithCode:(NSInteger)code isMulti:(BOOL)isMultiCode;
+{
+    NSError* error = (isMultiCode ?
+                      [NSError errorWithDomain:CURLMcodeErrorDomain code:(CURLMcode)code userInfo:nil] :
+                      [self errorForURL:_URL code:(CURLcode)code]);
+    CURLHandleLog(@"failed with error %@", error);
+
+    if ([self.delegate respondsToSelector:@selector(handle:didFailWithError:)])
+    {
+        [self.delegate handle:self didFailWithError:error];
+    }
+}
+
+
+
+#pragma mark Synchronous Loading
+
+- (void)sendSynchronousRequest:(NSURLRequest *)request credential:(NSURLCredential *)credential delegate:(id <CURLHandleDelegate>)delegate;
+{
+    self.delegate = delegate;
+
+    [_URL release]; // -setupRequest:É will fill it back in
+    CURLcode result = [self setupRequest:request credential:credential];
+
+    if (result == CURLE_OK)
+    {
+        result = curl_easy_perform(self.curl);
+    }
+
+    if (result == CURLE_OK)
+    {
+        [self finish];
+    }
+    else
+    {
+        [self failWithCode:result isMulti:NO];
+    }
+
+    [self cleanupIncludingHandle:NO];
+}
+
+#pragma mark Post-Request Info
+
+- (NSString *)initialFTPPath;
+{
+    char *entryPath;
+    if (curl_easy_getinfo(_curl, CURLINFO_FTP_ENTRY_PATH, &entryPath) != CURLE_OK) return nil;
+
+    return (entryPath ? [NSString stringWithUTF8String:entryPath] : nil);
+}
+
+#pragma mark Error Construction
+
+- (NSError*)errorForURL:(NSURL*)url code:(CURLcode)code
+{
+    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+                                     url, NSURLErrorFailingURLErrorKey,
+                                     [url absoluteString], NSURLErrorFailingURLStringErrorKey,
+                                     [NSString stringWithUTF8String:_errorBuffer], NSLocalizedDescriptionKey,
+                                     [NSString stringWithUTF8String:curl_easy_strerror(code)], NSLocalizedFailureReasonErrorKey,
+                                     nil];
+
+    long responseCode;
+    if (curl_easy_getinfo(_curl, CURLINFO_RESPONSE_CODE, &responseCode) == CURLE_OK && responseCode)
+    {
+        [userInfo setObject:[NSNumber numberWithLong:responseCode] forKey:@(CURLINFO_RESPONSE_CODE)];
+    }
+
+    long osErrorNumber = 0;
+    if (curl_easy_getinfo(_curl, CURLINFO_OS_ERRNO, &osErrorNumber) == CURLE_OK && osErrorNumber)
+    {
+        [userInfo setObject:[NSError errorWithDomain:NSPOSIXErrorDomain code:osErrorNumber userInfo:nil]
+                     forKey:NSUnderlyingErrorKey];
+    }
+
+    NSError* result = [NSError errorWithDomain:CURLcodeErrorDomain code:code userInfo:userInfo];
+    [userInfo release];
+
+
+    // Try to generate a Cocoa-friendly error on top of the raw libCurl one
+    switch (code)
+    {
+        case CURLE_UNSUPPORTED_PROTOCOL:
+            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorUnsupportedURL underlyingError:result];
+            break;
+
+        case CURLE_URL_MALFORMAT:
+            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorBadURL underlyingError:result];
+            break;
+
+        case CURLE_COULDNT_RESOLVE_HOST:
+        case CURLE_FTP_CANT_GET_HOST:
+            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorCannotFindHost underlyingError:result];
+            break;
+
+        case CURLE_COULDNT_CONNECT:
+            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorCannotConnectToHost underlyingError:result];
+            break;
+
+        case CURLE_REMOTE_ACCESS_DENIED:
+            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorNoPermissionsToReadFile underlyingError:result];
+            break;
+
+        case CURLE_WRITE_ERROR:
+            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorCannotWriteToFile underlyingError:result];
+            break;
+
+            //case CURLE_FTP_ACCEPT_TIMEOUT:    seems to have been added in a newer version of Curl than ours
+        case CURLE_OPERATION_TIMEDOUT:
+            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorTimedOut underlyingError:result];
+            break;
+
+        case CURLE_SSL_CONNECT_ERROR:
+            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorSecureConnectionFailed underlyingError:result];
+            break;
+
+        case CURLE_TOO_MANY_REDIRECTS:
+            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorHTTPTooManyRedirects underlyingError:result];
+            break;
+
+        case CURLE_BAD_CONTENT_ENCODING:
+            result = [self errorWithDomain:NSCocoaErrorDomain code:NSFileWriteInapplicableStringEncodingError underlyingError:result];
+            break;
+
+#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+        case CURLE_FILESIZE_EXCEEDED:
+            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorDataLengthExceedsMaximum underlyingError:result];
+            break;
+#endif
+
+#if MAC_OS_X_VERSION_10_7 <= MAC_OS_X_VERSION_MAX_ALLOWED
+        case CURLE_SEND_FAIL_REWIND:
+            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorRequestBodyStreamExhausted underlyingError:result];
+            break;
+#endif
+
+        case CURLE_LOGIN_DENIED:
+            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorUserAuthenticationRequired underlyingError:result];
+            break;
+
+        case CURLE_REMOTE_DISK_FULL:
+            result = [self errorWithDomain:NSCocoaErrorDomain code:NSFileWriteOutOfSpaceError underlyingError:result];
+            break;
+
+#if MAC_OS_X_VERSION_10_7 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_5_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+        case CURLE_REMOTE_FILE_EXISTS:
+            result = [self errorWithDomain:NSCocoaErrorDomain code:NSFileWriteFileExistsError underlyingError:result];
+            break;
+#endif
+
+        case CURLE_REMOTE_FILE_NOT_FOUND:
+            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorResourceUnavailable underlyingError:result];
+            break;
+
+        case CURLE_SSL_CACERT:
+        {
+            struct curl_certinfo *certInfo = NULL;
+            if (curl_easy_getinfo(_curl, CURLINFO_CERTINFO, &certInfo) == CURLE_OK)
+            {
+                // TODO: Extract something interesting from the certificate info. Unfortunately I seem to get back no info!
+            }
+
+            break;
+        }
+        default:
+            break;
+    }
+
+    return result;
+}
+
+- (NSError *)errorWithDomain:(NSString *)domain code:(NSInteger)code underlyingError:(NSError *)underlyingError;
+{
+    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithDictionary:[underlyingError userInfo]];
+    [userInfo setObject:underlyingError forKey:NSUnderlyingErrorKey];
+
+    NSError *result = [NSError errorWithDomain:domain code:code userInfo:userInfo];
+    [userInfo release];
+    return result;
+}
+
+#pragma mark - Multi Support
+
+- (BOOL)handledByMulti
+{
+    return self.multi != nil;
+}
+
+- (void)removedByMulti:(CURLMulti*)multi
+{
+    if (multi)
+    {
+        NSAssert(multi == self.multi, @"removed by the wrong multi: %@ not %@", multi, self.multi);
+    }
+
+    self.multi = nil;
+    self.delegate = nil;
+}
+
++ (CURLMulti*)standaloneMultiForTestPurposes
+{
+    CURLMulti* multi = [[[CURLMulti alloc] init] autorelease];
+    [multi startup];
+
+    return multi;
+}
+
++ (void)cleanupStandaloneMulti:(CURLMulti*)multi
+{
+    [multi shutdown];
+}
+
+#pragma mark Utilities
 
 - (BOOL)isCancelled
 {
@@ -607,89 +845,52 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
     return kInfoNames[type];
 }
 
-- (void)completeWithMultiCode:(CURLMcode)code;
+- (NSString*)description
 {
-    CURLHandleLog(@"completed with multi code %d", code);
-    
-    if (code == CURLM_OK)
-    {
-        [self finish];
-    }
-    else
-    {
-        [self failWithCode:code isMulti:YES];
-    }
-
-    [self cleanupIncludingHandle:YES];
-}
-
-- (void)completeWithCode:(CURLcode)code;
-{
-    CURLHandleLog(@"completed with code %d", code);
-
-    if (code == CURLE_OK)
-    {
-        [self finish];
-    }
-    else
-    {
-        [self failWithCode:code isMulti:NO];
-    }
-
-    [self cleanupIncludingHandle:YES];
-}
-
-- (void)finish;
-{
-    CURLHandleLog(@"finished");
-    [self notifyDelegateOfResponseIfNeeded];
-    if ([_delegate respondsToSelector:@selector(handleDidFinish:)])
-    {
-        [self.delegate handleDidFinish:self];
-    }
+    return [NSString stringWithFormat:@"<EASY %p (%p)>", self, self.curl];
 }
 
 
-- (void)cancel;
+- (void)notifyDelegateOfResponseIfNeeded;
 {
-    CURLHandleLog(@"cancelled");
+    // If a response has been buffered, send that off
 
-    // setting the delegate to nil ensures that we don't send any more delegate messages, and
-    // also tells anything internal that wants to know that we've been cancelled
-    self.delegate = nil;
-
-    if (self.multi)
+    if ([_headerBuffer length])
     {
-        [self.multi stopManagingHandle:self];
+        NSString *headerString = [[NSString alloc] initWithData:_headerBuffer encoding:NSASCIIStringEncoding];
+        [_headerBuffer setLength:0];
+
+        long code;
+        if (curl_easy_getinfo(_curl, CURLINFO_RESPONSE_CODE, &code) == CURLE_OK)
+        {
+            char *urlBuffer;
+            if (curl_easy_getinfo(_curl, CURLINFO_EFFECTIVE_URL, &urlBuffer) == CURLE_OK)
+            {
+                NSString *urlString = [[NSString alloc] initWithUTF8String:urlBuffer];
+                if (urlString)
+                {
+                    NSURL *url = [[NSURL alloc] initWithString:urlString];
+                    if (url)
+                    {
+                        NSURLResponse *response = [CURLResponse responseWithURL:url statusCode:code headerString:headerString];
+                        [self.delegate handle:self didReceiveResponse:response];
+
+                        [url release];
+                    }
+
+                    [urlString release];
+                }
+
+            }
+        }
+        [headerString release];
     }
 }
 
-- (void)removedByMulti:(CURLMulti*)multi
-{
-    if (multi)
-    {
-        NSAssert(multi == self.multi, @"removed by the wrong multi: %@ not %@", multi, self.multi);
-    }
-    
-    self.multi = nil;
-    self.delegate = nil;
-}
-
-- (void)failWithCode:(int)code isMulti:(BOOL)isMultiCode;
-{
-    NSError* error = (isMultiCode ?
-                      [NSError errorWithDomain:CURLMcodeErrorDomain code:code userInfo:nil] :
-                      [self errorForURL:_URL code:code]);
-    CURLHandleLog(@"failed with error %@", error);
-
-    if ([self.delegate respondsToSelector:@selector(handle:didFailWithError:)])
-    {
-        [self.delegate handle:self didFailWithError:error];
-    }
-}
+#pragma mark - Callback Methods
 
 /*"	Continue the writing callback in Objective C; now we have our instance variables.
-"*/
+ "*/
 
 - (size_t) curlReceiveDataFrom:(void *)inPtr size:(size_t)inSize number:(size_t)inNumber isHeader:(BOOL)header;
 {
@@ -712,7 +913,7 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
 		{
             // Once the body starts arriving, we know we have the full header, so can report that
             [self notifyDelegateOfResponseIfNeeded];
-            
+
             // Report regular body data
 			[self.delegate handle:self didReceiveData:data];
 		}
@@ -724,41 +925,6 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
 	}
 
 	return written;
-}
-
-// If a response has been buffered, send that off
-- (void)notifyDelegateOfResponseIfNeeded;
-{
-    if ([_headerBuffer length])
-    {
-        NSString *headerString = [[NSString alloc] initWithData:_headerBuffer encoding:NSASCIIStringEncoding];
-        [_headerBuffer setLength:0];
-        
-        long code;
-        if (curl_easy_getinfo(_curl, CURLINFO_RESPONSE_CODE, &code) == CURLE_OK)
-        {
-            char *urlBuffer;
-            if (curl_easy_getinfo(_curl, CURLINFO_EFFECTIVE_URL, &urlBuffer) == CURLE_OK)
-            {
-                NSString *urlString = [[NSString alloc] initWithUTF8String:urlBuffer];
-                if (urlString)
-                {
-                    NSURL *url = [[NSURL alloc] initWithString:urlString];
-                    if (url)
-                    {
-                        NSURLResponse *response = [CURLResponse responseWithURL:url statusCode:code headerString:headerString];
-                        [self.delegate handle:self didReceiveResponse:response];
-                        
-                        [url release];
-                    }
-                    
-                    [urlString release];
-                }
-                
-            }
-        }
-        [headerString release];
-    }
 }
 
 - (size_t) curlSendDataTo:(void *)inPtr size:(size_t)inSize number:(size_t)inNumber;
@@ -775,8 +941,8 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
                 NSError *error = [_uploadStream streamError];
 
                 [self.delegate handle:self
-             didReceiveDebugInformation:[NSString stringWithFormat:@"Read failed: %@", [error debugDescription]]
-                                 ofType:CURLINFO_HEADER_IN];
+           didReceiveDebugInformation:[NSString stringWithFormat:@"Read failed: %@", [error debugDescription]]
+                               ofType:CURLINFO_HEADER_IN];
             }
 
             return CURL_READFUNC_ABORT;
@@ -813,178 +979,9 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
     }
 }
 
-#pragma mark Synchronous Loading
+@end
 
-- (void)sendSynchronousRequest:(NSURLRequest *)request credential:(NSURLCredential *)credential delegate:(id <CURLHandleDelegate>)delegate;
-{
-    self.delegate = delegate;
-    
-    [_URL release]; // -setupRequest:É will fill it back in
-    CURLcode result = [self setupRequest:request credential:credential];
-    
-    if (result == CURLE_OK)
-    {
-        result = curl_easy_perform(self.curl);
-    }
-    
-    if (result == CURLE_OK)
-    {
-        [self finish];
-    }
-    else
-    {
-        [self failWithCode:result isMulti:NO];
-    }
-    
-    [self cleanupIncludingHandle:NO];
-}
-
-#pragma mark Post-Request Info
-
-- (NSString *)initialFTPPath;
-{
-    char *entryPath;
-    if (curl_easy_getinfo(_curl, CURLINFO_FTP_ENTRY_PATH, &entryPath) != CURLE_OK) return nil;
-    
-    return (entryPath ? [NSString stringWithUTF8String:entryPath] : nil);
-}
-
-#pragma mark Error Construction
-
-- (NSError*)errorForURL:(NSURL*)url code:(CURLcode)code
-{
-    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-                                     url, NSURLErrorFailingURLErrorKey,
-                                     [url absoluteString], NSURLErrorFailingURLStringErrorKey,
-                                     [NSString stringWithUTF8String:_errorBuffer], NSLocalizedDescriptionKey,
-                                     [NSString stringWithUTF8String:curl_easy_strerror(code)], NSLocalizedFailureReasonErrorKey,
-                                     nil];
-    
-    long responseCode;
-    if (curl_easy_getinfo(_curl, CURLINFO_RESPONSE_CODE, &responseCode) == CURLE_OK && responseCode)
-    {
-        [userInfo setObject:[NSNumber numberWithLong:responseCode] forKey:@(CURLINFO_RESPONSE_CODE)];
-    }
-    
-    long osErrorNumber = 0;
-    if (curl_easy_getinfo(_curl, CURLINFO_OS_ERRNO, &osErrorNumber) == CURLE_OK && osErrorNumber)
-    {
-        [userInfo setObject:[NSError errorWithDomain:NSPOSIXErrorDomain code:osErrorNumber userInfo:nil]
-                     forKey:NSUnderlyingErrorKey];
-    }
-    
-    NSError* result = [NSError errorWithDomain:CURLcodeErrorDomain code:code userInfo:userInfo];
-    [userInfo release];
-    
-    
-    // Try to generate a Cocoa-friendly error on top of the raw libCurl one
-    switch (code)
-    {
-        case CURLE_UNSUPPORTED_PROTOCOL:
-            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorUnsupportedURL underlyingError:result];
-            break;
-            
-        case CURLE_URL_MALFORMAT:
-            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorBadURL underlyingError:result];
-            break;
-            
-        case CURLE_COULDNT_RESOLVE_HOST:
-        case CURLE_FTP_CANT_GET_HOST:
-            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorCannotFindHost underlyingError:result];
-            break;
-            
-        case CURLE_COULDNT_CONNECT:
-            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorCannotConnectToHost underlyingError:result];
-            break;
-            
-        case CURLE_REMOTE_ACCESS_DENIED:
-            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorNoPermissionsToReadFile underlyingError:result];
-            break;
-            
-        case CURLE_WRITE_ERROR:
-            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorCannotWriteToFile underlyingError:result];
-            break;
-            
-            //case CURLE_FTP_ACCEPT_TIMEOUT:    seems to have been added in a newer version of Curl than ours
-        case CURLE_OPERATION_TIMEDOUT:
-            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorTimedOut underlyingError:result];
-            break;
-            
-        case CURLE_SSL_CONNECT_ERROR:
-            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorSecureConnectionFailed underlyingError:result];
-            break;
-            
-        case CURLE_TOO_MANY_REDIRECTS:
-            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorHTTPTooManyRedirects underlyingError:result];
-            break;
-            
-        case CURLE_BAD_CONTENT_ENCODING:
-            result = [self errorWithDomain:NSCocoaErrorDomain code:NSFileWriteInapplicableStringEncodingError underlyingError:result];
-            break;
-            
-#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_2_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-        case CURLE_FILESIZE_EXCEEDED:
-            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorDataLengthExceedsMaximum underlyingError:result];
-            break;
-#endif
-            
-#if MAC_OS_X_VERSION_10_7 <= MAC_OS_X_VERSION_MAX_ALLOWED
-        case CURLE_SEND_FAIL_REWIND:
-            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorRequestBodyStreamExhausted underlyingError:result];
-            break;
-#endif
-            
-        case CURLE_LOGIN_DENIED:
-            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorUserAuthenticationRequired underlyingError:result];
-            break;
-            
-        case CURLE_REMOTE_DISK_FULL:
-            result = [self errorWithDomain:NSCocoaErrorDomain code:NSFileWriteOutOfSpaceError underlyingError:result];
-            break;
-            
-#if MAC_OS_X_VERSION_10_7 <= MAC_OS_X_VERSION_MAX_ALLOWED || __IPHONE_5_0 <= __IPHONE_OS_VERSION_MAX_ALLOWED
-        case CURLE_REMOTE_FILE_EXISTS:
-            result = [self errorWithDomain:NSCocoaErrorDomain code:NSFileWriteFileExistsError underlyingError:result];
-            break;
-#endif
-            
-        case CURLE_REMOTE_FILE_NOT_FOUND:
-            result = [self errorWithDomain:NSURLErrorDomain code:NSURLErrorResourceUnavailable underlyingError:result];
-            break;
-            
-        case CURLE_SSL_CACERT:
-        {
-            struct curl_certinfo *certInfo = NULL;
-            if (curl_easy_getinfo(_curl, CURLINFO_CERTINFO, &certInfo) == CURLE_OK)
-            {
-                // TODO: Extract something interesting from the certificate info. Unfortunately I seem to get back no info!
-            }
-            
-            break;
-        }
-        default:
-            break;
-    }
-    
-    return result;
-}
-
-- (NSError *)errorWithDomain:(NSString *)domain code:(NSInteger)code underlyingError:(NSError *)underlyingError;
-{
-    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithDictionary:[underlyingError userInfo]];
-    [userInfo setObject:underlyingError forKey:NSUnderlyingErrorKey];
-    
-    NSError *result = [NSError errorWithDomain:domain code:code userInfo:userInfo];
-    [userInfo release];
-    return result;
-}
-
-#pragma mark Debugging
-
-- (NSString*)description
-{
-    return [NSString stringWithFormat:@"<EASY %p (%p)>", self, self.curl];
-}
+#pragma mark - Callback Functions
 
 // We always log out the debug info in DEBUG builds. We also send everything to the delegate.
 // In release builds, we just send header related stuff to the delegate.
@@ -1006,14 +1003,14 @@ int curlDebugFunction(CURL *curl, curl_infotype infoType, char *info, size_t inf
             // the length we're passed seems to be unreliable; we use strnlen to ensure that we never go past the infoLength we were given,
             // but often it seems that the string is *much* shorter
             NSUInteger actualLength = strnlen(info, infoLength);
-            
+
             NSString *string = [[NSString alloc] initWithBytes:info length:actualLength encoding:NSUTF8StringEncoding];
             if (!string)
             {
                 // FTP servers are fairly free to use whatever encoding they like. We've run into one that appears to be Hungarian; as far as I can tell ISO Latin 2 is the best compromise for that
                 string = [[NSString alloc] initWithBytes:info length:actualLength encoding:NSISOLatin2StringEncoding];
             }
-            
+
             if (!string)
             {
                 // I don't yet know what causes this, but it does happen from time to time. If so, insist that something useful go in the log
@@ -1030,31 +1027,27 @@ int curlDebugFunction(CURL *curl, curl_infotype infoType, char *info, size_t inf
                     string = [[NSString alloc] initWithFormat:@"Invalid debug info - info length seems to be too big: %ld", infoLength];
                 }
             }
-            
+
             CURLHandleLog(@"%@ - %@", [self.class nameForType:infoType], string);
-            
+
             if (delegateResponds)
             {
                 [self.delegate handle:self didReceiveDebugInformation:string ofType:infoType];
             }
-            
+
             [string release];
         }
     }
-    
+
     return 0;
 }
-
-@end
-
-#pragma mark - Non-Debug Callbacks
-
 
 int curlSocketOptFunction(CURLHandle *self, curl_socket_t curlfd, curlsocktype purpose)
 {
     if (purpose == CURLSOCKTYPE_IPCXN)
     {
         // FTP control connections should be kept alive. However, I'm fairly sure this is unlikely to have a real effect in practice since OS X's default time before it starts sending keep alive packets is 2 hours :(
+        // TODO: Looks like we could adopt CURLOPT_TCP_KEEPINTVL instead
         if ([[[self valueForKey:@"_URL"] scheme] isEqualToString:@"ftp"])
         {
             int keepAlive = 1;
@@ -1116,5 +1109,6 @@ int curlKnownHostsFunction(CURL *easy,     /* easy handle */
 
     return result;
 }
+
 
 @end

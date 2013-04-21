@@ -1,8 +1,9 @@
 //
 //  NSURLRequest+CURLHandle.h
+//  CURLHandle
 //
 //  Created by Dan Wood <dwood@karelia.com> on Fri Jun 22 2001.
-//  This is in the public domain, but please report any improvements back to the author.
+//  Copyright (c) 2013 Karelia Software. All rights reserved.
 
 #import <Foundation/Foundation.h>
 #import <curl/curl.h>
@@ -57,7 +58,12 @@
 
 
 @interface NSMutableURLRequest (CURLProtocol)
-// Setting to YES automatically registers CURLProtocol with NSURLProtocol. You can do so earlier, manually if required
+/**
+ Setting to YES automatically registers CURLProtocol with NSURLProtocol. You can do so earlier, manually if required
+ 
+ @param useCurl should this request use CURL?
+ */
+
 - (void)setShouldUseCurlHandle:(BOOL)useCurl;
 @end
 

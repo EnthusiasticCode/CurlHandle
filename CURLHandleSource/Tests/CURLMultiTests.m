@@ -1,21 +1,44 @@
 //
 //  CURLMultiTests.m
+//  CURLHandle
 //
 //  Created by Sam Deane on 20/09/2012.
-//  Copyright (c) 2012 Karelia Software. All rights reserved.
+//  Copyright (c) 2013 Karelia Software. All rights reserved.
 //
 
 #import "CURLMulti.h"
 #import "CURLHandleBasedTest.h"
+#import "CURLHandle+TestingSupport.h"
 
 #import "NSURLRequest+CURLHandle.h"
 #import "KMSServer.h"
 
+
 @interface CURLMultiTests : CURLHandleBasedTest
 
+@property (assign, nonatomic) BOOL pauseOnResponse;
+@property (assign, nonatomic) BOOL finished;
 @end
 
 @implementation CURLMultiTests
+
+
+- (void)handle:(CURLHandle *)handle didReceiveResponse:(NSURLResponse *)response
+{
+    if (self.pauseOnResponse)
+    {
+        [self pause];
+    }
+    [super handle:handle didReceiveResponse:response];
+}
+
+- (void)handleDidFinish:(CURLHandle *)handle
+{
+    self.finished = YES;
+    [super handleDidFinish:handle];
+}
+
+#pragma mark - Tests
 
 - (void)testStartupShutdown
 {
@@ -114,23 +137,39 @@
 
 - (void)testCancelling
 {
+    self.pauseOnResponse = YES;
+
     CURLMulti* multi = [[CURLMulti alloc] init];
 
     [multi startup];
 
-    NSURLRequest* request = [NSURLRequest requestWithURL:[self testFileRemoteURL]];
+    NSURL* largeFile = [NSURL URLWithString:@"https://github.com/karelia/CurlHandle/archive/master.zip"];
+    NSURLRequest* request = [NSURLRequest requestWithURL:largeFile];
     CURLHandle* handle = [[CURLHandle alloc] initWithRequest:request credential:nil delegate:self multi:multi];
+
+    // CURL seems to die horribly if we create and shutdown the multi without actually adding at least one easy handle to it - so wait until
+    // we've at least received the response
+    
+    [self runUntilPaused];
 
     [handle cancel];
 
     STAssertTrue([handle isCancelled], @"should have been cancelled");
 
+    // wait until the multi actually gets round to removing the handle
+    while ([handle handledByMulti])
+    {
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate date]];
+    }
+
+    STAssertFalse(self.finished, @"shouldn't have finished by the time we get here");
+    
     [handle release];
 
     [multi shutdown];
     
     [multi release];
-
 }
+
 
 @end

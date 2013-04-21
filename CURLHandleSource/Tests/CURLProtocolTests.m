@@ -1,8 +1,9 @@
 //
 //  CURLProtocolTests.m
+//  CURLHandle
 //
 //  Created by Sam Deane on 20/09/2012.
-//  Copyright (c) 2012 Karelia Software. All rights reserved.
+//  Copyright (c) 2013 Karelia Software. All rights reserved.
 //
 
 #import "NSURLRequest+CURLHandle.h"
@@ -10,6 +11,8 @@
 #import "CURLHandleBasedTest.h"
 
 @interface CURLProtocolTests : CURLHandleBasedTest<NSURLConnectionDelegate, NSURLConnectionDataDelegate>
+
+@property (assign, nonatomic) BOOL pauseOnResponse;
 
 @end
 
@@ -29,6 +32,10 @@
 
     self.response = response;
     self.buffer = [NSMutableData data];
+    if (self.pauseOnResponse)
+    {
+        [self pause];
+    }
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)dataIn
@@ -66,11 +73,15 @@
 
 - (void)testCancelling
 {
-    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:[self testFileRemoteURL]];
+    self.pauseOnResponse = YES;
+    NSURL* largeFile = [NSURL URLWithString:@"https://github.com/karelia/CurlHandle/archive/master.zip"];
+    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:largeFile];
     request.shouldUseCurlHandle = YES;
 
     NSURLConnection* connection = [NSURLConnection connectionWithRequest:request delegate:self];
     STAssertNotNil(connection, @"failed to get connection for request %@", request);
+
+    [self runUntilPaused];
 
     [connection cancel];
 
@@ -118,11 +129,14 @@
 
         [self runUntilPaused];
 
-        NSHTTPURLResponse* response = (NSHTTPURLResponse*)self.response;
-        STAssertTrue([response isMemberOfClass:[NSHTTPURLResponse class]], @"got response of class %@", [response class]);
-        STAssertEquals([response statusCode], (NSInteger) 226, @"got unexpected code %ld", [response statusCode]);
-        STAssertNil(self.error, @"got error %@", self.error);
-        STAssertTrue([self.buffer length] == 0, @"got unexpected data %@", self.buffer);
+        NSURLResponse* response = self.response;
+        if ([response respondsToSelector:@selector(statusCode)])
+        {
+            NSUInteger code = [(id)response statusCode];
+            STAssertEquals(code, (NSInteger) 226, @"got unexpected code %ld", code);
+            STAssertNil(self.error, @"got error %@", self.error);
+            STAssertTrue([self.buffer length] == 0, @"got unexpected data %@", self.buffer);
+        }
     }
 }
 

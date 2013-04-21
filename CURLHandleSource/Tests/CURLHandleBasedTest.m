@@ -1,8 +1,9 @@
 //
 //  CURLHandleBasedTest
+//  CURLHandle
 //
 //  Created by Sam Deane on 20/09/2012.
-//  Copyright (c) 2012 Karelia Software. All rights reserved.
+//  Copyright (c) 2013 Karelia Software. All rights reserved.
 //
 
 #import "CURLHandleBasedTest.h"
@@ -19,7 +20,7 @@
 
 - (NSURL*)testFileRemoteURL
 {
-    NSURL* testFileURL = [NSURL URLWithString:@"https://raw.github.com/karelia/CurlHandle/sam/async/CURLHandleSource/CURLHandleTests/TestContent.txt"];
+    NSURL* testFileURL = [NSURL URLWithString:@"https://raw.github.com/karelia/CurlHandle/v4.x-beta/CURLHandleSource/Tests/TestContent.txt"];
 
     return testFileURL;
 }

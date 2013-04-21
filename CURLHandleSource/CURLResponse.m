@@ -1,12 +1,12 @@
 //
 //  CURLResponse.m
+//  CURLHandle
 //
 //  Created by Dan Wood <dwood@karelia.com> on Fri Jun 22 2001.
-//  This is in the public domain, but please report any improvements back to the author.
+//  Copyright (c) 2013 Karelia Software. All rights reserved.
 
 #import "CURLResponse.h"
-
-#import "NSString+CURLHandle.h"
+#import "CURLRequest.h"
 
 
 @interface CURLHTTPResponse : NSHTTPURLResponse
@@ -35,6 +35,7 @@
     else
     {
         CURLResponse *result = [[self alloc] initWithURL:url MIMEType:nil expectedContentLength:NSURLResponseUnknownLength textEncodingName:nil];
+        result->_code = statusCode;
         result->_header = [header copy];
         return [result autorelease];
     }
@@ -47,6 +48,7 @@
 }
 
 @synthesize headerString = _header;
+@synthesize statusCode = _code;
 
 @end
 

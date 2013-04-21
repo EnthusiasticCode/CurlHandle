@@ -1,12 +1,12 @@
 [submodule "curl"]
 	path = curl
-	url = https://github.com/bagder/curl.git
+	url = https://github.com/karelia/curl.git
 [submodule "c-ares"]
 	path = c-ares
 	url = https://github.com/bagder/c-ares.git
 [submodule "SFTP"]
 	path = SFTP
 	url = https://github.com/EnthusiasticCode/libssh2_sftp-Cocoa-wrapper.git
-[submodule "CURLHandleSource/CURLHandleTests/MockServer"]
-	path = CURLHandleSource/CURLHandleTests/MockServer
-	url = https://github.com/karelia/MockServer.git
+[submodule "CURLHandleSource/Tests/MockServer"]
+	path = CURLHandleSource/Tests/MockServer
+	url = git@github.com:karelia/MockServer.git

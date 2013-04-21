@@ -1,8 +1,9 @@
 //
 //  CURLMulti.h
+//  CURLHandle
 //
 //  Created by Sam Deane on 20/09/2012.
-//  Copyright (c) 2012 Karelia Software. All rights reserved.
+//  Copyright (c) 2013 Karelia Software. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -13,7 +14,16 @@
 #define CURLMultiLog(...) // no logging by default - to enable it, add something like this to the prefix: #define CURLMultiLog NSLog
 #endif
 
+#ifndef CURLMultiLogError
+#define CURLMultiLogError NSLog
+#endif
+
+#ifndef CURLMultiLogDetail
+#define CURLMultiLogDetail CURLMultiLog
+#endif
+
 @class CURLHandle;
+@class CURLSocket;
 
 /**
  * Wrapper for a curl_multi handle.
@@ -33,10 +43,14 @@
 
 @interface CURLMulti : NSObject
 {
+    CURLM* _multiForSocket;
     NSMutableArray* _handles;
-    CURLM* _multi;
+    NSMutableArray* _sockets;
+    NSMutableArray* _pendingAdditions;
+    NSMutableArray* _pendingRemovals;
     dispatch_queue_t _queue;
     dispatch_source_t _timer;
+    int64_t _timeout;
 }
 
 /**
@@ -87,6 +101,19 @@
 
 - (void)stopManagingHandle:(CURLHandle*)handle;
 
-- (dispatch_source_t)updateSource:(dispatch_source_t)source type:(dispatch_source_type_t)type socket:(int)socket required:(BOOL)required;
+/**
+ Update the dispatch source for a given socket and type.
+ 
+ @warning The routine is used internally by <CURLMulti> / <CURLSocket>, and shouldn't be called from your code.
+
+ @param source The current dispatch source for the given type
+ @param type Is this the source for reading or writing?
+ @param socket The <CURLSocket> object that owns the source.
+ @param raw The raw system socket that the dispatch source should be monitoring.
+ @param required Is the source required? If not, an existing source will be cancelled. If required and the source parameter is nil, and new one will be created.
+ @return The new/updated dispatch source.
+*/
+
+- (dispatch_source_t)updateSource:(dispatch_source_t)source type:(dispatch_source_type_t)type socket:(CURLSocket*)socket raw:(int)raw required:(BOOL)required;
 
 @end
