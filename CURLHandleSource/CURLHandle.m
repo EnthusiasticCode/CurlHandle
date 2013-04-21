@@ -307,6 +307,7 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
 
     NSString *proxyHost = nil;
     NSNumber *proxyPort = nil;
+#if !TARGET_OS_IPHONE
     NSString *scheme = [[[request URL] scheme] lowercaseString];
 
     // Allocate and keep the proxy dictionary
@@ -339,6 +340,7 @@ static int curlKnownHostsFunction(CURL *easy,     /* easy handle */
         proxyHost = (NSString *) [_proxies objectForKey:(NSString *)kSCPropNetProxiesFTPProxy];
         proxyPort = (NSNumber *)[_proxies objectForKey:(NSString *)kSCPropNetProxiesFTPPort];
     }
+#endif
 
     if (proxyHost && proxyPort)
     {
