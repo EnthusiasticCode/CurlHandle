@@ -43,7 +43,7 @@ if [ "${PLATFORM_NAME}" == "macosx" ]
 then
 export LDFLAGS="-rpath ${BUILT_PRODUCTS_DIR}"
 fi
-CONFIGURE_ARGS=("--host=${ARCH}-apple-darwin" "--with-sysroot=${SDKROOT}" "--with-openssl" "--with-libssh2" "--enable-ares" "--without-libidn" "--enable-debug" "--enable-optimize" "--disable-warnings" "--disable-werror" "--disable-curldebug" "--disable-symbol-hiding" "--enable-proxy")
+CONFIGURE_ARGS=("--host=${ARCH}-apple-darwin" "--with-sysroot=${SDKROOT}" "--with-darwinssl" "--with-libssh2" "--enable-ares" "--without-libidn" "--enable-debug" "--enable-optimize" "--disable-warnings" "--disable-werror" "--disable-curldebug" "--disable-symbol-hiding" "--enable-proxy")
 if [ "${PLATFORM_NAME}" == "macosx" ]
 then
 CONFIGURE_ARGS=("CFLAGS=-mmacosx-version-min=10.6" "${CONFIGURE_ARGS[@]}" "--enable-shared" "--disable-static")
