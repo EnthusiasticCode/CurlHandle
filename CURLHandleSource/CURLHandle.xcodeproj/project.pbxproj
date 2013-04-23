@@ -669,7 +669,7 @@
 				5F53D9F3172450C700DE6269 /* PBXTargetDependency */,
 			);
 			name = "CURLHandle-iOS";
-			productName = "CurlHandle-iOS";
+			productName = "CURLHandle-iOS";
 			productReference = 5F53D9C617244E6B00DE6269 /* libCURLHandle-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
