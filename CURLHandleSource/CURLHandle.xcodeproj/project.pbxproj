@@ -99,18 +99,36 @@
 		5F53D9E91724502100DE6269 /* CURLSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 22731037161305FF00D6D49E /* CURLSocket.m */; };
 		5F53D9EA1724502100DE6269 /* NSDictionary+CURLHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 22767ED8161078F1008D0848 /* NSDictionary+CURLHandle.m */; };
 		5F53D9EC1724504000DE6269 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53D9EB1724503F00DE6269 /* MobileCoreServices.framework */; };
+		5F53DAB71726F3F200DE6269 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53DAB61726F3F200DE6269 /* SenTestingKit.framework */; };
+		5F53DAB91726F3F200DE6269 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53DAB81726F3F200DE6269 /* UIKit.framework */; };
+		5F53DABB1726F3F200DE6269 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53DABA1726F3F200DE6269 /* Foundation.framework */; };
+		5F53DACA1726F50700DE6269 /* libCURLHandle-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53D9C617244E6B00DE6269 /* libCURLHandle-iOS.a */; };
+		5F53DACB1726F53400DE6269 /* CURLHandleBasedTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 229748FB1610C1AE0042A51A /* CURLHandleBasedTest.m */; };
+		5F53DACC1726F53400DE6269 /* CURLHandleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 223FD0AB160B5F1200BE1C80 /* CURLHandleTests.m */; };
+		5F53DACD1726F53400DE6269 /* CURLProtocolTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 22002EDC161097EC00464D33 /* CURLProtocolTests.m */; };
+		5F53DACE1726F53400DE6269 /* CURLMultiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 223FD0A3160B523700BE1C80 /* CURLMultiTests.m */; };
+		5F53DACF1726F53400DE6269 /* StandaloneGcdTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2213AA4B1709BC92003F2557 /* StandaloneGcdTest.m */; };
+		5F53DAD01726F53400DE6269 /* StandaloneNoGcdTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 22F947431709C59C00F0E6E1 /* StandaloneNoGcdTest.m */; };
+		5F53DAD11726F53400DE6269 /* StandaloneGcdWaitTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 22F947411709C11A00F0E6E1 /* StandaloneGcdWaitTest.m */; };
+		5F53DAD21726F55100DE6269 /* KMSCloseCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 2287EBE616B7CF9A0039E555 /* KMSCloseCommand.m */; };
+		5F53DAD31726F55100DE6269 /* KMSCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 2287EBE816B7CF9A0039E555 /* KMSCommand.m */; };
+		5F53DAD41726F55100DE6269 /* KMSConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BF086316AEECEC009BE5A3 /* KMSConnection.m */; };
+		5F53DAD51726F55100DE6269 /* KMSListener.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BF086516AEECEC009BE5A3 /* KMSListener.m */; };
+		5F53DAD61726F55100DE6269 /* KMSPauseCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 2287EBEA16B7CF9A0039E555 /* KMSPauseCommand.m */; };
+		5F53DAD71726F55100DE6269 /* KMSRegExResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BF086716AEECEC009BE5A3 /* KMSRegExResponder.m */; };
+		5F53DAD81726F55100DE6269 /* KMSResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BF086916AEECEC009BE5A3 /* KMSResponder.m */; };
+		5F53DAD91726F55100DE6269 /* KMSResponseCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BF086B16AEECEC009BE5A3 /* KMSResponseCollection.m */; };
+		5F53DADA1726F55100DE6269 /* KMSSendDataCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 2287EBEC16B7CF9A0039E555 /* KMSSendDataCommand.m */; };
+		5F53DADB1726F55100DE6269 /* KMSSendServerDataCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 2287EBEE16B7CF9A0039E555 /* KMSSendServerDataCommand.m */; };
+		5F53DADC1726F55100DE6269 /* KMSSendStringCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 2287EBF016B7CF9A0039E555 /* KMSSendStringCommand.m */; };
+		5F53DADD1726F55100DE6269 /* KMSServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BF086D16AEECEC009BE5A3 /* KMSServer.m */; };
+		5F53DADE1726F55100DE6269 /* KMSTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BF087016AEECEC009BE5A3 /* KMSTestCase.m */; };
+		5F53DADF1726F55100DE6269 /* KMSTranscriptEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BF08C016AEEDA9009BE5A3 /* KMSTranscriptEntry.m */; };
 		79B96CBF0A6360F90060AC12 /* CURLHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 79B96CBB0A6360F90060AC12 /* CURLHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		79B96CC00A6360F90060AC12 /* CURLHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B96CBC0A6360F90060AC12 /* CURLHandle.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		22BCCE2B16ADD57700DFFE8D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = CURLHandle;
-		};
 		5F53D99E1724329100DE6269 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5F53D9961724329000DE6269 /* curl.xcodeproj */;
@@ -270,6 +288,10 @@
 		5F53D9B717243B6100DE6269 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		5F53D9C617244E6B00DE6269 /* libCURLHandle-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libCURLHandle-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F53D9EB1724503F00DE6269 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/MobileCoreServices.framework; sourceTree = DEVELOPER_DIR; };
+		5F53DAB41726F3F200DE6269 /* CURLHandleTests-iOS.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "CURLHandleTests-iOS.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F53DAB61726F3F200DE6269 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		5F53DAB81726F3F200DE6269 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		5F53DABA1726F3F200DE6269 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		795946890AA88D0000EBF548 /* ResumableHTTPUploader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResumableHTTPUploader.h; sourceTree = "<group>"; };
 		7959468A0AA88D0000EBF548 /* ResumableHTTPUploader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResumableHTTPUploader.m; sourceTree = "<group>"; };
 		79B96CBB0A6360F90060AC12 /* CURLHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CURLHandle.h; sourceTree = "<group>"; };
@@ -313,6 +335,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5F53DAB01726F3F200DE6269 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5F53DACA1726F50700DE6269 /* libCURLHandle-iOS.a in Frameworks */,
+				5F53DAB71726F3F200DE6269 /* SenTestingKit.framework in Frameworks */,
+				5F53DAB91726F3F200DE6269 /* UIKit.framework in Frameworks */,
+				5F53DABB1726F3F200DE6269 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF560486A6940098B216 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -336,6 +369,7 @@
 				223FD092160B523700BE1C80 /* CURLHandleTests.octest */,
 				22C9CFBF17035A0A004610FE /* crashtest */,
 				5F53D9C617244E6B00DE6269 /* libCURLHandle-iOS.a */,
+				5F53DAB41726F3F200DE6269 /* CURLHandleTests-iOS.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -350,6 +384,7 @@
 				0867D69AFE84028FC02AAC07 /* Libraries & Frameworks */,
 				220C11A41716067E0086F199 /* Documentation */,
 				2298FF5D1716C6F30001EBC7 /* Scripts */,
+				5F53DAB51726F3F200DE6269 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 			);
 			name = CURLHandle;
@@ -573,6 +608,16 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		5F53DAB51726F3F200DE6269 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5F53DAB61726F3F200DE6269 /* SenTestingKit.framework */,
+				5F53DAB81726F3F200DE6269 /* UIKit.framework */,
+				5F53DABA1726F3F200DE6269 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -631,7 +676,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				22BCCE2C16ADD57700DFFE8D /* PBXTargetDependency */,
 			);
 			name = CURLHandleTests;
 			productName = CURLHandleTests;
@@ -672,6 +716,24 @@
 			productName = "CURLHandle-iOS";
 			productReference = 5F53D9C617244E6B00DE6269 /* libCURLHandle-iOS.a */;
 			productType = "com.apple.product-type.library.static";
+		};
+		5F53DAB31726F3F200DE6269 /* CURLHandleTests-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5F53DAC91726F3F200DE6269 /* Build configuration list for PBXNativeTarget "CURLHandleTests-iOS" */;
+			buildPhases = (
+				5F53DAAF1726F3F200DE6269 /* Sources */,
+				5F53DAB01726F3F200DE6269 /* Frameworks */,
+				5F53DAB11726F3F200DE6269 /* Resources */,
+				5F53DAB21726F3F200DE6269 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "CURLHandleTests-iOS";
+			productName = "CURLHandleTests-iOS";
+			productReference = 5F53DAB41726F3F200DE6269 /* CURLHandleTests-iOS.octest */;
+			productType = "com.apple.product-type.bundle";
 		};
 		8DC2EF4F0486A6940098B216 /* CURLHandle */ = {
 			isa = PBXNativeTarget;
@@ -721,8 +783,9 @@
 			projectRoot = "";
 			targets = (
 				8DC2EF4F0486A6940098B216 /* CURLHandle */,
-				5F53D9C517244E6B00DE6269 /* CURLHandle-iOS */,
 				223FD091160B523700BE1C80 /* CURLHandleTests */,
+				5F53D9C517244E6B00DE6269 /* CURLHandle-iOS */,
+				5F53DAB31726F3F200DE6269 /* CURLHandleTests-iOS */,
 				22C9CFBE17035A0A004610FE /* Standalone Test */,
 			);
 		};
@@ -758,6 +821,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5F53DAB11726F3F200DE6269 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF520486A6940098B216 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -782,6 +852,19 @@
 			shellPath = /bin/sh;
 			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
 			showEnvVarsInLog = 0;
+		};
+		5F53DAB21726F3F200DE6269 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -840,6 +923,34 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5F53DAAF1726F3F200DE6269 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5F53DACB1726F53400DE6269 /* CURLHandleBasedTest.m in Sources */,
+				5F53DACC1726F53400DE6269 /* CURLHandleTests.m in Sources */,
+				5F53DACD1726F53400DE6269 /* CURLProtocolTests.m in Sources */,
+				5F53DACE1726F53400DE6269 /* CURLMultiTests.m in Sources */,
+				5F53DACF1726F53400DE6269 /* StandaloneGcdTest.m in Sources */,
+				5F53DAD01726F53400DE6269 /* StandaloneNoGcdTest.m in Sources */,
+				5F53DAD11726F53400DE6269 /* StandaloneGcdWaitTest.m in Sources */,
+				5F53DAD21726F55100DE6269 /* KMSCloseCommand.m in Sources */,
+				5F53DAD31726F55100DE6269 /* KMSCommand.m in Sources */,
+				5F53DAD41726F55100DE6269 /* KMSConnection.m in Sources */,
+				5F53DAD51726F55100DE6269 /* KMSListener.m in Sources */,
+				5F53DAD61726F55100DE6269 /* KMSPauseCommand.m in Sources */,
+				5F53DAD71726F55100DE6269 /* KMSRegExResponder.m in Sources */,
+				5F53DAD81726F55100DE6269 /* KMSResponder.m in Sources */,
+				5F53DAD91726F55100DE6269 /* KMSResponseCollection.m in Sources */,
+				5F53DADA1726F55100DE6269 /* KMSSendDataCommand.m in Sources */,
+				5F53DADB1726F55100DE6269 /* KMSSendServerDataCommand.m in Sources */,
+				5F53DADC1726F55100DE6269 /* KMSSendStringCommand.m in Sources */,
+				5F53DADD1726F55100DE6269 /* KMSServer.m in Sources */,
+				5F53DADE1726F55100DE6269 /* KMSTestCase.m in Sources */,
+				5F53DADF1726F55100DE6269 /* KMSTranscriptEntry.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF540486A6940098B216 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -860,11 +971,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		22BCCE2C16ADD57700DFFE8D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8DC2EF4F0486A6940098B216 /* CURLHandle */;
-			targetProxy = 22BCCE2B16ADD57700DFFE8D /* PBXContainerItemProxy */;
-		};
 		5F53D9F3172450C700DE6269 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "curl-iOS";
@@ -1070,6 +1176,57 @@
 			};
 			name = Release;
 		};
+		5F53DAC61726F3F200DE6269 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Tests/CURLHandleTests-Prefix.pch";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INFOPLIST_FILE = "Tests/CURLHandleTests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		5F53DAC71726F3F200DE6269 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Tests/CURLHandleTests-Prefix.pch";
+				INFOPLIST_FILE = "Tests/CURLHandleTests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1114,6 +1271,15 @@
 			buildConfigurations = (
 				5F53D9D217244E6B00DE6269 /* Debug */,
 				5F53D9D317244E6B00DE6269 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5F53DAC91726F3F200DE6269 /* Build configuration list for PBXNativeTarget "CURLHandleTests-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5F53DAC61726F3F200DE6269 /* Debug */,
+				5F53DAC71726F3F200DE6269 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
