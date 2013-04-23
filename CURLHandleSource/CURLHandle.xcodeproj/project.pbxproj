@@ -76,7 +76,6 @@
 		5F53D9BA17243B8B00DE6269 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53D99F1724329100DE6269 /* libcurl.dylib */; };
 		5F53D9C017243BC600DE6269 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53D9B517243B2D00DE6269 /* Foundation.framework */; };
 		5F53D9C117243BCF00DE6269 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53D9B717243B6100DE6269 /* SystemConfiguration.framework */; };
-		5F53D9C917244E6B00DE6269 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53D9C817244E6B00DE6269 /* Foundation.framework */; };
 		5F53D9D517244FA500DE6269 /* CK2SSHCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 27D77E111672BBB50091EF91 /* CK2SSHCredential.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F53D9D617244FAE00DE6269 /* CURLHandle+TestingSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 22C9CFE91703A954004610FE /* CURLHandle+TestingSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F53D9D717244FB300DE6269 /* CURLHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 79B96CBB0A6360F90060AC12 /* CURLHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -242,7 +241,7 @@
 		22BF08C316AEEDD8009BE5A3 /* ftp.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ftp.json; sourceTree = "<group>"; };
 		22BF08C416AEEDD8009BE5A3 /* http.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = http.json; sourceTree = "<group>"; };
 		22BF08E116AEEDD9009BE5A3 /* webdav.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = webdav.json; sourceTree = "<group>"; };
-		22C9CFBF17035A0A004610FE /* Standalone Test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Standalone Test"; sourceTree = BUILT_PRODUCTS_DIR; };
+		22C9CFBF17035A0A004610FE /* crashtest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = crashtest; path = "Standalone Test"; sourceTree = BUILT_PRODUCTS_DIR; };
 		22C9CFCD17035A86004610FE /* multi-gcd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "multi-gcd.c"; sourceTree = "<group>"; };
 		22C9CFE71703A86D004610FE /* CURLHandle+MultiSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CURLHandle+MultiSupport.h"; sourceTree = "<group>"; };
 		22C9CFE91703A954004610FE /* CURLHandle+TestingSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CURLHandle+TestingSupport.h"; sourceTree = "<group>"; };
@@ -270,7 +269,6 @@
 		5F53D9B517243B2D00DE6269 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5F53D9B717243B6100DE6269 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		5F53D9C617244E6B00DE6269 /* libCURLHandle-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libCURLHandle-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5F53D9C817244E6B00DE6269 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5F53D9EB1724503F00DE6269 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/MobileCoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		795946890AA88D0000EBF548 /* ResumableHTTPUploader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResumableHTTPUploader.h; sourceTree = "<group>"; };
 		7959468A0AA88D0000EBF548 /* ResumableHTTPUploader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResumableHTTPUploader.m; sourceTree = "<group>"; };
@@ -311,7 +309,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5F53D9C917244E6B00DE6269 /* Foundation.framework in Frameworks */,
 				5F53D9EC1724504000DE6269 /* MobileCoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -337,7 +334,7 @@
 			children = (
 				8DC2EF5B0486A6940098B216 /* CURLHandle.framework */,
 				223FD092160B523700BE1C80 /* CURLHandleTests.octest */,
-				22C9CFBF17035A0A004610FE /* Standalone Test */,
+				22C9CFBF17035A0A004610FE /* crashtest */,
 				5F53D9C617244E6B00DE6269 /* libCURLHandle-iOS.a */,
 			);
 			name = Products;
@@ -353,7 +350,6 @@
 				0867D69AFE84028FC02AAC07 /* Libraries & Frameworks */,
 				220C11A41716067E0086F199 /* Documentation */,
 				2298FF5D1716C6F30001EBC7 /* Scripts */,
-				5F53D9C717244E6B00DE6269 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 			);
 			name = CURLHandle;
@@ -577,14 +573,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		5F53D9C717244E6B00DE6269 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				5F53D9C817244E6B00DE6269 /* Foundation.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -663,7 +651,7 @@
 			);
 			name = "Standalone Test";
 			productName = crashtest;
-			productReference = 22C9CFBF17035A0A004610FE /* Standalone Test */;
+			productReference = 22C9CFBF17035A0A004610FE /* crashtest */;
 			productType = "com.apple.product-type.tool";
 		};
 		5F53D9C517244E6B00DE6269 /* CURLHandle-iOS */ = {
