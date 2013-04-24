@@ -145,6 +145,9 @@
 - (BOOL)usingMockServer
 {
     NSString* ftpTest = [[NSUserDefaults standardUserDefaults] objectForKey:@"CURLHandleFTPTestURL"];
+#if TARGET_OS_IPHONE
+    ftpTest = ftpTest ?: @"MockServer";
+#endif
     return [ftpTest isEqualToString:@"MockServer"];
 }
 
@@ -152,6 +155,9 @@
 {
     NSURL* result = nil;
     NSString* ftpTest = [[NSUserDefaults standardUserDefaults] objectForKey:@"CURLHandleFTPTestURL"];
+#if TARGET_OS_IPHONE
+    ftpTest = ftpTest ?: @"MockServer";
+#endif
     if ([ftpTest isEqualToString:@"MockServer"])
     {
         [self setupServerWithResponseFileNamed:@"ftp"];

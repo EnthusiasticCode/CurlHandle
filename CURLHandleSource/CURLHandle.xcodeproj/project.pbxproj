@@ -100,8 +100,6 @@
 		5F53D9EA1724502100DE6269 /* NSDictionary+CURLHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 22767ED8161078F1008D0848 /* NSDictionary+CURLHandle.m */; };
 		5F53D9EC1724504000DE6269 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53D9EB1724503F00DE6269 /* MobileCoreServices.framework */; };
 		5F53DAB71726F3F200DE6269 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53DAB61726F3F200DE6269 /* SenTestingKit.framework */; };
-		5F53DAB91726F3F200DE6269 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53DAB81726F3F200DE6269 /* UIKit.framework */; };
-		5F53DABB1726F3F200DE6269 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53DABA1726F3F200DE6269 /* Foundation.framework */; };
 		5F53DACA1726F50700DE6269 /* libCURLHandle-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53D9C617244E6B00DE6269 /* libCURLHandle-iOS.a */; };
 		5F53DACB1726F53400DE6269 /* CURLHandleBasedTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 229748FB1610C1AE0042A51A /* CURLHandleBasedTest.m */; };
 		5F53DACC1726F53400DE6269 /* CURLHandleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 223FD0AB160B5F1200BE1C80 /* CURLHandleTests.m */; };
@@ -124,6 +122,18 @@
 		5F53DADD1726F55100DE6269 /* KMSServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BF086D16AEECEC009BE5A3 /* KMSServer.m */; };
 		5F53DADE1726F55100DE6269 /* KMSTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BF087016AEECEC009BE5A3 /* KMSTestCase.m */; };
 		5F53DADF1726F55100DE6269 /* KMSTranscriptEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 22BF08C016AEEDA9009BE5A3 /* KMSTranscriptEntry.m */; };
+		5F53DB141727D13F00DE6269 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53D9A11724329100DE6269 /* libcurl.a */; };
+		5F53DB191727D15000DE6269 /* libcares.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53DB151727D14F00DE6269 /* libcares.a */; };
+		5F53DB1A1727D15000DE6269 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53DB161727D15000DE6269 /* libcrypto.a */; };
+		5F53DB1B1727D15000DE6269 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53DB171727D15000DE6269 /* libssh2.a */; };
+		5F53DB1C1727D15000DE6269 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53DB181727D15000DE6269 /* libssl.a */; };
+		5F53DB1E1727D17E00DE6269 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53DB1D1727D17E00DE6269 /* libz.dylib */; };
+		5F53DB1F1727D3CA00DE6269 /* ftp.json in Resources */ = {isa = PBXBuildFile; fileRef = 22BF08C316AEEDD8009BE5A3 /* ftp.json */; };
+		5F53DB201727D3CA00DE6269 /* http.json in Resources */ = {isa = PBXBuildFile; fileRef = 22BF08C416AEEDD8009BE5A3 /* http.json */; };
+		5F53DB211727D3CA00DE6269 /* webdav.json in Resources */ = {isa = PBXBuildFile; fileRef = 22BF08E116AEEDD9009BE5A3 /* webdav.json */; };
+		5F53DB221727D3CA00DE6269 /* TestContent.txt in Resources */ = {isa = PBXBuildFile; fileRef = 22DC488416CC115300211948 /* TestContent.txt */; };
+		5F53DB231727D3CA00DE6269 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 223FD09F160B523700BE1C80 /* InfoPlist.strings */; };
+		5F53DB251727D71200DE6269 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F53DB241727D71200DE6269 /* Security.framework */; };
 		79B96CBF0A6360F90060AC12 /* CURLHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 79B96CBB0A6360F90060AC12 /* CURLHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		79B96CC00A6360F90060AC12 /* CURLHandle.m in Sources */ = {isa = PBXBuildFile; fileRef = 79B96CBC0A6360F90060AC12 /* CURLHandle.m */; };
 /* End PBXBuildFile section */
@@ -292,6 +302,12 @@
 		5F53DAB61726F3F200DE6269 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		5F53DAB81726F3F200DE6269 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		5F53DABA1726F3F200DE6269 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		5F53DB151727D14F00DE6269 /* libcares.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libcares.a; path = "../build/Release-iphoneos/libcares.a"; sourceTree = "<group>"; };
+		5F53DB161727D15000DE6269 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libcrypto.a; path = "../SFTP/build/Release-iphoneos/libcrypto.a"; sourceTree = "<group>"; };
+		5F53DB171727D15000DE6269 /* libssh2.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libssh2.a; path = "../SFTP/build/Release-iphoneos/libssh2.a"; sourceTree = "<group>"; };
+		5F53DB181727D15000DE6269 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libssl.a; path = "../SFTP/build/Release-iphoneos/libssl.a"; sourceTree = "<group>"; };
+		5F53DB1D1727D17E00DE6269 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/usr/lib/libz.dylib; sourceTree = DEVELOPER_DIR; };
+		5F53DB241727D71200DE6269 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		795946890AA88D0000EBF548 /* ResumableHTTPUploader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResumableHTTPUploader.h; sourceTree = "<group>"; };
 		7959468A0AA88D0000EBF548 /* ResumableHTTPUploader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResumableHTTPUploader.m; sourceTree = "<group>"; };
 		79B96CBB0A6360F90060AC12 /* CURLHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CURLHandle.h; sourceTree = "<group>"; };
@@ -339,10 +355,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5F53DB1E1727D17E00DE6269 /* libz.dylib in Frameworks */,
+				5F53DB191727D15000DE6269 /* libcares.a in Frameworks */,
+				5F53DB1A1727D15000DE6269 /* libcrypto.a in Frameworks */,
+				5F53DB1B1727D15000DE6269 /* libssh2.a in Frameworks */,
+				5F53DB1C1727D15000DE6269 /* libssl.a in Frameworks */,
+				5F53DB141727D13F00DE6269 /* libcurl.a in Frameworks */,
 				5F53DACA1726F50700DE6269 /* libCURLHandle-iOS.a in Frameworks */,
 				5F53DAB71726F3F200DE6269 /* SenTestingKit.framework in Frameworks */,
-				5F53DAB91726F3F200DE6269 /* UIKit.framework in Frameworks */,
-				5F53DABB1726F3F200DE6269 /* Foundation.framework in Frameworks */,
+				5F53DB251727D71200DE6269 /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -426,6 +447,7 @@
 				5F53D9B717243B6100DE6269 /* SystemConfiguration.framework */,
 				5F53D9B517243B2D00DE6269 /* Foundation.framework */,
 				27D77E151672BD9B0091EF91 /* Security.framework */,
+				5F53DB241727D71200DE6269 /* Security.framework */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
@@ -590,10 +612,15 @@
 		5F53D99117240A9700DE6269 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				5F53DB1D1727D17E00DE6269 /* libz.dylib */,
 				5F53D9B017243AE000DE6269 /* libcrypto.dylib */,
+				5F53DB161727D15000DE6269 /* libcrypto.a */,
 				5F53D9AE17243ADA00DE6269 /* libssl.dylib */,
+				5F53DB181727D15000DE6269 /* libssl.a */,
 				5F53D9AC17243AD400DE6269 /* libssh2.dylib */,
+				5F53DB171727D15000DE6269 /* libssh2.a */,
 				5F53D9A3172432DD00DE6269 /* libcares.dylib */,
+				5F53DB151727D14F00DE6269 /* libcares.a */,
 				5F53D9961724329000DE6269 /* curl.xcodeproj */,
 			);
 			name = Libraries;
@@ -825,6 +852,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5F53DB231727D3CA00DE6269 /* InfoPlist.strings in Resources */,
+				5F53DB1F1727D3CA00DE6269 /* ftp.json in Resources */,
+				5F53DB201727D3CA00DE6269 /* http.json in Resources */,
+				5F53DB211727D3CA00DE6269 /* webdav.json in Resources */,
+				5F53DB221727D3CA00DE6269 /* TestContent.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1195,6 +1227,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "Tests/CURLHandleTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				WRAPPER_EXTENSION = octest;
@@ -1220,6 +1253,7 @@
 				GCC_PREFIX_HEADER = "Tests/CURLHandleTests-Prefix.pch";
 				INFOPLIST_FILE = "Tests/CURLHandleTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;

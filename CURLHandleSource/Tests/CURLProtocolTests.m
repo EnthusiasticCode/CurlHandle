@@ -40,7 +40,7 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)dataIn
 {
-    NSLog(@"got data %ld bytes", [dataIn length]);
+    NSLog(@"got data %ld bytes", (unsigned long)[dataIn length]);
 
     [self.buffer appendData:dataIn];
 }
