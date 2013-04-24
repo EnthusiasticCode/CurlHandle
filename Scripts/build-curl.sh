@@ -48,7 +48,7 @@ if [ "${PLATFORM_NAME}" == "macosx" ]
 then
 CONFIGURE_ARGS=("CFLAGS=-mmacosx-version-min=10.6" "${CONFIGURE_ARGS[@]}" "--enable-shared" "--disable-static")
 else
-CONFIGURE_ARGS=("${CONFIGURE_ARGS[@]}" "--enable-static" "--disable-shared")
+CONFIGURE_ARGS=("CFLAGS=-miphoneos-version-min=5.0" "${CONFIGURE_ARGS[@]}" "--enable-static" "--disable-shared")
 fi
 
 ./buildconf
